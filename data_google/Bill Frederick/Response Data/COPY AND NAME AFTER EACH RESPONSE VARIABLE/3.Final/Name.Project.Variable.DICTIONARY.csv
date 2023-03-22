@@ -1,4 +1,0 @@
-Field,Definition
-rep,identifier of the rep (i.e. block) in which the strip was located
-treatment,state treatments as listed in PRESENTABLE data and define
-strip,identifier of a unique strip corresponding to a treatment and rep
