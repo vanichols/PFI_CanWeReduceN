@@ -1,0 +1,9 @@
+STRIP,REP,TREATMENT (Typical/Reduced),TOTAL N-RATE (units/ac),TOTAL ACRES,ACTUAL YIELD (bu/ac or lb),ACTUAL YIELD PERCENT MOISTURE (%)
+1,1,Typical,130,1.7,232.77,15
+2,2,Reduced,81,1.7,224.6,15
+3,1,Reduced,81,1.7,219.65,15
+4,2,Typical,130,1.7,230.46,15
+5,1,reduced,81,1.7,225.04,15
+6,2,Typical,130,1.7,233.13,15
+7,1,Typical,130,1.7,230.46,15
+8,2,reduced,81,1.7,207.79,15

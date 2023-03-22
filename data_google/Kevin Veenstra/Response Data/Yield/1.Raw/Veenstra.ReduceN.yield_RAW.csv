@@ -1,0 +1,17 @@
+Field,REP,TREATMENT (Typical/Reduced),TOTAL ACRES,ACTUAL YIELD (bu/ac or lb),ACTUAL YIELD PERCENT MOISTURE (%)
+1,1,Typical,1,238,16.2
+1,1,Reduced,1,202,15.8
+1,2,Reduced,1,200,15.7
+1,2,Typical,1,217,15.5
+1,3,Reduced,1,189,15.8
+1,3,Typical,1,226,15.9
+1,4,Typical,1,228,15.5
+1,4,Reduced,1,192,15.4
+2,1,Typical,1,159,13.4
+2,1,Reduced,1,189,13.5
+2,2,Reduced,1,190,13.5
+2,2,Typical,1,191,13.6
+2,3,Reduced,1,187,13.2
+2,3,Typical,1,176,13.1
+2,4,Typical,1,178,13.2
+2,4,Reduced,1,166,13.7

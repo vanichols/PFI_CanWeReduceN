@@ -1,0 +1,9 @@
+STRIP,REP,TREATMENT (Typical/Reduced),yield (bu/ac) @ 15.5%
+1,1,Typical,234.1473373
+2,1,Reduced,225.9289941
+3,2,Reduced,220.9497041
+4,2,Typical,231.8236686
+5,3,Reduced,226.3715976
+6,3,Typical,234.5094675
+7,4,Typical,231.8236686
+8,4,Reduced,209.0195266
