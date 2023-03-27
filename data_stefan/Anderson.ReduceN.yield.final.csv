@@ -1,0 +1,9 @@
+Rep,Treatment,Strip,yield (bu/ac) @ 15.5%,nrate_lbac
+1,Typical,1,174.2869112,157.5
+2,Typical,2,171.5474556,157.5
+1,Reduced,3,170.4827574,105
+2,Reduced,4,170.5026036,105
+3,Typical,5,171.785645,157.5
+3,Reduced,6,169.7533373,105
+4,Reduced,7,166.7737278,105
+4,Typical,8,171.9799882,157.5

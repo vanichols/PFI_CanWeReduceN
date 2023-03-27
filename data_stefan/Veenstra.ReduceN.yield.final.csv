@@ -1,17 +1,17 @@
-Field,REP,TREATMENT (Typical/Reduced),yield (bu/ac) @ 15.5%
-1,1,Typical,236.0284024
-1,1,Reduced,201.2828402
-1,2,Reduced,199.5266272
-1,2,Typical,217
-1,3,Reduced,188.3289941
-1,3,Typical,224.9301775
-1,4,Typical,228
-1,4,Reduced,192.2272189
-2,1,Typical,162.9514793
-2,1,Reduced,193.4733728
-2,2,Reduced,194.4970414
-2,2,Typical,195.2946746
-2,3,Reduced,192.0899408
-2,3,Typical,180.9988166
-2,4,Typical,182.8449704
-2,4,Reduced,169.5360947
+Field,REP,TREATMENT (Typical/Reduced),yield (bu/ac) @ 15.5%,
+1,1,Typical,236.0284024,158
+1,1,Reduced,201.2828402,108
+1,2,Reduced,199.5266272,108
+1,2,Typical,217,158
+1,3,Reduced,188.3289941,108
+1,3,Typical,224.9301775,158
+1,4,Typical,228,158
+1,4,Reduced,192.2272189,108
+2,1,Typical,162.9514793,158
+2,1,Reduced,193.4733728,108
+2,2,Reduced,194.4970414,108
+2,2,Typical,195.2946746,158
+2,3,Reduced,192.0899408,108
+2,3,Typical,180.9988166,158
+2,4,Typical,182.8449704,158
+2,4,Reduced,169.5360947,108

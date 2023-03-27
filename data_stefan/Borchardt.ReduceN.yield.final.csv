@@ -1,9 +1,9 @@
-STRIP,REP,TREATMENT (Typical/Reduced),yield (bu/ac) 15.5%
-1,1,Typical,197.4486203
-2,1,Reduced,182.1874692
-3,2,Reduced,190.6284195
-4,2,Typical,215.7989851
-5,3,Reduced,192.314434
-6,3,Typical,218.8881989
-7,4,Typical,229.6134269
-8,4,Reduced,182.4920396
+STRIP,REP,TREATMENT (Typical/Reduced),yield (bu/ac) 15.5%,TOTAL N-RATE (units/ac)
+1,1,Typical,197.4486203,126
+2,1,Reduced,182.1874692,106
+3,2,Reduced,190.6284195,106
+4,2,Typical,215.7989851,126
+5,3,Reduced,192.314434,106
+6,3,Typical,218.8881989,126
+7,4,Typical,229.6134269,126
+8,4,Reduced,182.4920396,106
