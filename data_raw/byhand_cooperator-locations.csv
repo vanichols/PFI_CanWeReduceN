@@ -1,22 +1,24 @@
-﻿getting location data from intake surveys,,,
-,,,
-,,,
-,,,
-,,,
-last_name,city,state,zip
-fredericks,osage,ia,50461
-amundson,osage,ia,50461
-frederick,jefferson,ia,50129
-deal,jefferson,ia,50129
-boyer,reinbeck,ia,50669
-bakehouse,hastings,ia,51540
-prevo,bloomfield,ia,52537
-veenstra,grinnell,ia,50112
-waldo,cascade,ia,52033
-anderson,aurelia,ia,51005
-bardole,jefferson,ia,50129
-harvey,redfield,ia,50233
-bennett,galva,ia,51020
-sieren,keota,ia,52248
-borchardt,fenton,ia,50539
-dooley,albion,ia,50005
+﻿getting location data from intake surveys,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+last_name,city,state,zip,motivation_quote,reflection_quote
+fredericks,osage,ia,50461,,
+amundson,osage,ia,50461,[This research trial] will help fine tune our management. ,"[we] had some understanding of how to cut N when planting into clover, this was a great way to verify our thinking"
+frederick,jefferson,ia,50129,If it works it will greatly reduce N cost and increase profitability.,My search for optimum N rates isn't over yet.
+deal,jefferson,ia,50129,One of my biggest questions for several years has been whether I was being too aggressive with the amount of N I was using. This trial allowed me to explore that important question.,"This was 1 trial on 1 farm for 1 year. The real value comes by increasing the ""n"" (i.e. number of samples) for these trials. If they can become regionalized, that would be great as well. Our soil in Greene County is certainly different from the soils in different parts of the state."
+boyer,reinbeck,ia,50669,,"What was the most valuable aspect of conducting this trial, for you? Cost reduction."
+bakehouse,hastings,ia,51540,[These trials will] give me the confidence to either reduce N rates or be secure in the knowledge we aren’t over-applying nutrients.,"Jon normally wouldn't have tried reducing his N rate by such an aggressive amount, but it showed him the yield decline wasn't as large as he was expecting. "
+prevo,bloomfield,ia,52537,Wanted to help others. ,"Kevin gained knowledge, and had fun!"
+veenstra,grinnell,ia,50112,,"Without this trial, Kevin may have cut back nitrogen too much too soon."
+waldo,cascade,ia,52033,"We've never done strip trials before, so it will be good for us to learn how to do it so that we can continue to track progress and perform our own on-farm research.","Oftentimes, sidedressing is just assumed to be necessary for an in-season N supply. It was eye-opening to see no significant yield difference.
+between manure-only and manure + side dressing."
+anderson,aurelia,ia,51005,"I hope my research site, combined with other farmer-cooperator sites and our collective results can reform the narrative around nitrogen fertilization and
+use for the benefit of farmers and the environment.","In a drought year, I expected there to be a lower response to additional nitrogen, but didn't expect the final results to be so close."
+bardole,jefferson,ia,50129,,I thought the yield reduction would be higher
+harvey,redfield,ia,50233,I'm hoping to involve my daughter and use this experience as an opportunity to interest her in the farm operation,I have drifted away from on-farm trials and need to be doing more. I  was scouting fields more often looking for signs of fertilizer rate reductions besides the usual pests
+bennett,galva,ia,51020,"I knew we could grow good corn with less N, but knowing what happens when corn runs out of N, I habitually over apply fertilizer. This trial helped give me the confidence to take a deeper look at what rates I'm planning to apply.","Most farmers don't have the confidence or data to try to reduce fertilizer rates and see what happens. We get one shot at the best crop every year, and the logical thing to do seems to be to give the crop everything it needs (and more) to maximize yields. This trial will put together a good set of farm-scale data to give farmers the confidence to dial in their N rate to improve profitability and water quality."
+sieren,keota,ia,52248,,"I've already got N rates cut to the bone, so this trial had little impact on my practices"
+borchardt,fenton,ia,50539,,Probably should've had an additional 20# check.
+dooley,albion,ia,50005,,"Need to continue testing the hypothesis, perhaps at lower ratios of difference."

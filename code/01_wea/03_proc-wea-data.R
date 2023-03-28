@@ -16,22 +16,41 @@ w <-
 t_lt <- 
   w |> 
   group_by(lon, lat, city, doy) |> #--can't group by mm and dd, not always the same doy 
-  summarise(t_lt = mean(t2m)) 
+  summarise(t_lt = mean(t2m, na.rm = T)) 
 
 t_22 <- 
   w |> 
   filter(year == 2022) |> 
   group_by(lon, lat, city, mm, dd, doy) |> 
-  summarise(t_22 = mean(t2m)) 
+  summarise(t_22 = mean(t2m, na.rm = T)) 
 
 t_final <- 
   t_lt |> 
   left_join(t_22) |>
   pivot_longer(c(t_lt, t_22))
 
-# precip ------------------------------------------------------------------
+# precip ---------------------------------------------------------------
 
-p <- 
+p_lt <- 
+  w |> 
+  group_by(lon, lat, city, doy) |> #--can't group by mm and dd, not always the same doy 
+  summarise(p_lt = mean(prectotcorr, na.rm = T)) 
+
+p_22 <- 
+  w |> 
+  filter(year == 2022) |> 
+  group_by(lon, lat, city, mm, dd, doy) |> 
+  summarise(p_22 = mean(prectotcorr, na.rm = T)) 
+
+p_final <- 
+  p_lt |> 
+  left_join(p_22) |>
+  pivot_longer(c(p_lt, p_22))
+
+
+# cum precip ------------------------------------------------------------------
+
+pc <- 
   w |> 
   group_by(city, year) |> 
   mutate(
@@ -39,20 +58,20 @@ p <-
     cumprecip_in = cumsum(precip_in)) 
 
 #--long term
-p_lt <- 
-  p |>  
+pc_lt <- 
+  pc |>  
   group_by(lon, lat, city, doy) |> 
   summarise(cp_lt = mean(cumprecip_in)) 
 
-p_22 <- 
-  p |> 
+pc_22 <- 
+  pc |> 
   filter(year == 2022) |> 
   group_by(lon, lat, city, mm, dd, doy) |> 
   summarise(cp_22 = mean(cumprecip_in)) 
 
-p_final <- 
-  p_lt |> 
-  left_join(p_22) |> 
+pc_final <- 
+  pc_lt |> 
+  left_join(pc_22) |> 
   pivot_longer(c(cp_lt, cp_22))
 
 
@@ -82,10 +101,10 @@ ct_final <-
 
 # figurability ------------------------------------------------------------
 
-p_final |> 
-  filter(city == "albion") |> 
+pc_final |> 
   ggplot(aes(doy, value)) +
-  geom_line(aes(color = name), size = 3)
+  geom_line(aes(color = name), size = 3) + 
+  facet_wrap(~city, scales = "free")
 
 t_final |> 
   filter(city == "albion") |> 
@@ -107,4 +126,7 @@ ct_final |>
   write_csv("data_wea/cum-temperature-F.csv")
 
 p_final |> 
+  write_csv("data_wea/precip-in.csv")
+
+pc_final |> 
   write_csv("data_wea/cum-precip-in.csv")
