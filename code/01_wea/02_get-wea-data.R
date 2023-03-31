@@ -1,4 +1,8 @@
-library(tidygeocoder)
+#--purpose: use lat/long to ping nasa power database
+#--get temperature at 2 m height
+#--get corrected precipitation
+#--note it takes a while to run
+
 library(nasapower)
 library(tidyverse)
 

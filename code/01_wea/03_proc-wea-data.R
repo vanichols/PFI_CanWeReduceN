@@ -1,3 +1,6 @@
+#--purpose: read in raw nasa weather data
+#--summarise into 'figurable' form
+
 library(tidyverse)
 
 rm(list = ls())
@@ -13,11 +16,13 @@ w <-
 
 # temperature ---------------------------------------------------------------
 
+#--long term temperature (30 years)
 t_lt <- 
   w |> 
   group_by(lon, lat, city, doy) |> #--can't group by mm and dd, not always the same doy 
   summarise(t_lt = mean(t2m, na.rm = T)) 
 
+#--temperature that year
 t_22 <- 
   w |> 
   filter(year == 2022) |> 
@@ -27,17 +32,23 @@ t_22 <-
 t_final <- 
   t_lt |> 
   left_join(t_22) |>
-  pivot_longer(c(t_lt, t_22))
+  pivot_longer(c(t_lt, t_22))|> 
+  #--remove day 366
+  filter(!is.na(mm))
 
 # precip ---------------------------------------------------------------
 
+#--long term precip
 p_lt <- 
   w |> 
+  filter(!is.na(prectotcorr)) |> 
   group_by(lon, lat, city, doy) |> #--can't group by mm and dd, not always the same doy 
   summarise(p_lt = mean(prectotcorr, na.rm = T)) 
 
+#--precip that year
 p_22 <- 
   w |> 
+  filter(!is.na(prectotcorr)) |> 
   filter(year == 2022) |> 
   group_by(lon, lat, city, mm, dd, doy) |> 
   summarise(p_22 = mean(prectotcorr, na.rm = T)) 
@@ -45,13 +56,18 @@ p_22 <-
 p_final <- 
   p_lt |> 
   left_join(p_22) |>
-  pivot_longer(c(p_lt, p_22))
+  pivot_longer(c(p_lt, p_22)) |> 
+  #--remove day 366
+  filter(!is.na(mm))
+
 
 
 # cum precip ------------------------------------------------------------------
 
+#--cumulative precip
 pc <- 
   w |> 
+  filter(!is.na(prectotcorr)) |> 
   group_by(city, year) |> 
   mutate(
     precip_in = prectotcorr,
@@ -63,6 +79,7 @@ pc_lt <-
   group_by(lon, lat, city, doy) |> 
   summarise(cp_lt = mean(cumprecip_in)) 
 
+#--that year
 pc_22 <- 
   pc |> 
   filter(year == 2022) |> 
@@ -72,11 +89,14 @@ pc_22 <-
 pc_final <- 
   pc_lt |> 
   left_join(pc_22) |> 
-  pivot_longer(c(cp_lt, cp_22))
+  pivot_longer(c(cp_lt, cp_22)) |> 
+  #--remove day 366
+  filter(!is.na(mm))
 
 
 # temperature, cum --------------------------------------------------------
 
+#--growing degree days, base 0
 ct_lt <- 
   t_lt |> 
   group_by(city) |> 
@@ -96,25 +116,10 @@ ct_22 <-
 ct_final <- 
   ct_lt |> 
   left_join(ct_22) |> 
-  pivot_longer(c(ct_lt, ct_22))
+  pivot_longer(c(ct_lt, ct_22))|> 
+  #--remove day 366
+  filter(!is.na(mm))
 
-
-# figurability ------------------------------------------------------------
-
-pc_final |> 
-  ggplot(aes(doy, value)) +
-  geom_line(aes(color = name), size = 3) + 
-  facet_wrap(~city, scales = "free")
-
-t_final |> 
-  filter(city == "albion") |> 
-  ggplot(aes(doy, value)) +
-  geom_line(aes(color = name), size = 3)
-
-ct_final |> 
-  filter(city == "albion") |> 
-  ggplot(aes(doy, value)) +
-  geom_line(aes(color = name), size = 3)
 
 
 # write -------------------------------------------------------------------

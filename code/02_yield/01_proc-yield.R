@@ -158,6 +158,7 @@ d11 <-
   rename(trt = 2,
          nrate_lbac = 4,
          yield_buac = 5) |> 
+  mutate(rep = ifelse(hybrid == 1, rep, rep + 4)) |> 
   select(last_name, rep, trt, nrate_lbac, yield_buac)
 
 # 12. harvey----------------------------------------------------------------------
@@ -233,78 +234,18 @@ for (i in 1:length(coops)){
   
 }
 
+d_all |> 
+  filter(last_name == "Fredericks")
+
+d_all %>%
+  dplyr::group_by(last_name, rep, trt) %>%
+  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
+  dplyr::filter(n > 1L) 
+
 d_all2 <- 
   d_all |> 
   mutate(trt = ifelse(trt == "typical", "typ", "red")) |> 
   arrange(last_name, rep, trt)
 
 d_all2 |> 
-  ggplot(aes(rep, yield_buac)) +
-  geom_point(aes(fill = nrate_lbac), 
-             color = "black", 
-             pch = 21, 
-             size = 4) +
-  facet_wrap(~last_name, scale = "free_x") +
-  scale_fill_viridis_c()
-
-d_all2 |> 
-  ggplot(aes(trt, yield_buac, group = rep)) +
-  geom_col(aes(fill = nrate_lbac),
-           position = position_dodge2(),
-             color = "black") +
-  facet_wrap(~last_name, scale = "free_x") +
-  scale_fill_viridis_c()
-
-
-#--what if we did it as a % of maximum yield?
-
-#--get means for each group
-yld_avg <- 
-  d_all2 |>
-  group_by(last_name, trt) |>
-  summarise(avg_yield = mean(yield_buac, na.rm = T),
-            nrate_lbac = mean(nrate_lbac, na.rm = T))
-  
-
-
-d_all2 |>
-  group_by(last_name) |> 
-  mutate(max_yield = max(yield_buac, na.rm = T),
-         yield_pct = yield_buac/max_yield) |> 
-  ggplot(aes(trt, yield_pct, group = rep)) +
-  geom_col(aes(fill = nrate_lbac),
-           position = position_dodge2(),
-           color = "black") +
-  facet_wrap(~last_name, scale = "free_x") +
-  scale_fill_viridis_c()
-
-
-
-d_all2 |>
-  ggplot(aes(trt, yield_buac, group = rep)) +
-  geom_col(aes(fill = nrate_lbac),
-           position = position_dodge2(),
-           color = "black") +
-  geom_hline(data = yld_avg, 
-             aes(yintercept = avg_yield,
-                 color = nrate_lbac),
-             size = 2) +
-  facet_wrap(~last_name, scale = "free_x") +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c()
-
-
-d_all2 |>
-  ggplot(aes(trt, yield_buac, group = rep)) +
-  geom_hline(data = yld_avg, 
-             aes(yintercept = avg_yield,
-                 color = trt),
-             size = 2) +
-  geom_col(aes(fill = trt),
-           position = position_dodge2(),
-           color = "black") +
-  facet_wrap(~last_name, scale = "free_x") +
-  scale_fill_manual(values = c("lightgreen", "darkgreen")) +
-  scale_color_manual(values = c("lightgreen", "darkgreen")) +
-  theme_bw()
-  
+  write_csv("data_tidy/yields.csv")
