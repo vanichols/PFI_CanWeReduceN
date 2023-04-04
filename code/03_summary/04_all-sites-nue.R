@@ -74,6 +74,25 @@ y |>
   select(nrate_lbac) |> 
   summary(.)
 
+# theme -------------------------------------------------------------------
+
+my_nue_theme <- 
+  theme_bw() +
+  theme(
+    axis.title.y = element_text(angle = 0,
+                                vjust = 0.5),
+    axis.title = element_text(size = rel(1.0)),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    plot.title = element_text(size = rel(1.2)),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    plot.caption = element_text(hjust = 0),
+    panel.border = element_blank()
+    
+  ) 
+
+
+theme_set(my_nue_theme)
 
 # nue ---------------------------------------------------------------------
 
@@ -110,10 +129,11 @@ ggplot() +
   geom_text(data = nue_dat,
             aes(reorder(last_name, -typ),  typ + 0.15, label = nue_sig),
             size = 5) +
+  scale_y_continuous(limits = c(0, 2.5)) +
   labs(
     x = NULL,
     y = "Nitrogen applied\nper unit corn produced\n(lb N/bu corn)",
-    title = "Of the 17 trials, 15 saw significant reductions\nin nitrogen applied per unit corn yield at the reduced N rate",
+    title = str_wrap("Of the 17 trials, 15 saw significant reductions in nitrogen applied per unit corn yield at the reduced N rate", width = 70),
     caption = "* = Statistiignificant change at a 95% confidence level\nNS = No statistically significant change"
   )
 

@@ -6,7 +6,6 @@ library(patchwork)
 rm(list = ls())
 
 source("code/00_fig-things.R")
-theme_set(my_wea_theme)
 
 # data --------------------------------------------------------------------
 
@@ -25,6 +24,57 @@ p <- read_csv("data_wea/precip-in.csv") |>
 
 cp <- read_csv("data_wea/cum-precip-in.csv") |> 
   left_join(ln_key)
+
+
+
+
+# temperature -------------------------------------------------------------
+
+#--deviation from long term average, temp
+
+TempFig <- function(f.data = t, f.last_name = "bakehouse") {
+  
+  f.data |>
+    group_by(last_name, city, mm, name) |> 
+    summarise(value = mean(value, na.rm = T)) |> 
+    pivot_wider(names_from = name, values_from = value) |> 
+    mutate(dev_t = t_22 - t_lt,
+           date = paste("2022", mm, "01", sep = "/"),
+           date_mm = as_date(date),
+           f_order = ifelse(last_name == f.last_name, 2, 1)) |> 
+    arrange(f_order) |> 
+    mutate(f_order = as_factor(f_order),
+           f_order = fct_rev(f_order)) |> 
+    ggplot(aes(date_mm, dev_t)) + 
+    geom_line(aes(group = last_name, 
+                  color = last_name == f.last_name, 
+                  size = last_name == f.last_name,
+                  alpha = last_name == f.last_name),
+              show.legend = F, 
+              size = 0.5) + 
+    geom_hline(yintercept = 0) +
+    geom_text(aes(x = as_date("2022/07/01"),
+                  y = 5.5,
+                  #hjust = 0,
+                  label = "Warmer than average"),
+              check_overlap = T,
+              fontface = "italic",
+              color = "gray50") +
+    geom_text(aes(x = as_date("2022/07/01"),
+                  y = -5.5,
+                  #hjust = 0,
+                  label = "Cooler than average"),
+              check_overlap = T,
+              fontface = "italic",
+              color = "gray50") +
+    scale_y_continuous(limits = c(-6, 6)) +
+    scale_x_date(date_breaks = "1 month", 
+                 date_labels = "%b") +
+    labs(x = NULL,
+         y = "Monthly average temperature,\ndeviation from average (deg F)")
+  
+  
+}  
 
 
 # precipitation -----------------------------------------------------------
@@ -51,98 +101,80 @@ ln_key
 #--deviation from long term average, cum precip
 
 CumPrecipFig <- function(f.data = cp, f.last_name = "bakehouse") {
-    
-    f.data |>
-      mutate(dd_date = as.Date(doy - 1, 
-                               origin = "2022/01/01")) |> 
-      pivot_wider(names_from = name, values_from = value) |> 
-      mutate(dev_cp = cp_22 - cp_lt) |> 
-      ggplot(aes(dd_date, dev_cp)) + 
-      geom_hline(yintercept = 0) +
-    geom_line(aes(group = last_name, 
-                  color = last_name == f.last_name, 
-                  size = last_name == f.last_name,
-                  alpha = last_name == f.last_name),
-              show.legend = F) + 
-      geom_text(aes(x = as.Date("2022/01/01"), 
-                    y = 13, 
-                    hjust = 0,
-                    label = "Wetter than average"),
-                check_overlap = T,
-                color = "gray50",
-                fontface = "italic") +
-      geom_text(aes(x = as.Date("2022/01/01"), 
-                    y = -5, 
-                    hjust = 0,
-                    label = "Drier than average"),
-                check_overlap = T,
-                color = "gray50",
-                fontface = "italic") +
-      scale_x_date(date_breaks = "1 month", 
-                   date_labels = "%b") +
-      labs(x = NULL,
-           y = "Cumulative precipitation,\ndeviation from average (inches)")
-    
-  }
-  
-
-
-# temperature -------------------------------------------------------------
-
-#--deviation from long term average, temp
-
-TempFig <- function(f.data = t, f.last_name = "bakehouse") {
   
   f.data |>
-    group_by(last_name, city, mm, name) |> 
-    summarise(value = mean(value, na.rm = T)) |> 
+    mutate(dd_date = as.Date(doy - 1, 
+                             origin = "2022/01/01")) |> 
     pivot_wider(names_from = name, values_from = value) |> 
-    mutate(dev_t = t_22 - t_lt,
-           date = paste("2022", mm, "01", sep = "/"),
-           date_mm = as_date(date),
-           f_order = ifelse(last_name == f.last_name, 2, 1)) |> 
-    arrange(f_order) |> 
-    mutate(f_order = as_factor(f_order),
-           f_order = fct_rev(f_order)) |> 
-    ggplot(aes(date_mm, dev_t)) + 
+    mutate(dev_cp = cp_22 - cp_lt) |> 
+    ggplot(aes(dd_date, dev_cp)) + 
+    geom_hline(yintercept = 0) +
     geom_line(aes(group = last_name, 
                   color = last_name == f.last_name, 
                   size = last_name == f.last_name,
                   alpha = last_name == f.last_name),
-              show.legend = F) + 
-    geom_hline(yintercept = 0) +
-    geom_text(aes(x = as_date("2022/01/01"),
-                  y = 3,
-                  hjust = 0,
-                  label = "Warmer than average"),
+              show.legend = F, 
+              size = 0.5) + 
+    geom_text(aes(x = as.Date("2022/07/01"), 
+                  y = 13, 
+                  #hjust = 0,
+                  label = "Wetter than average"),
               check_overlap = T,
-              fontface = "italic",
-              color = "gray50") +
-    geom_text(aes(x = as_date("2022/01/01"),
-                  y = -6,
-                  hjust = 0,
-                  label = "Cooler than average"),
+              color = "gray50",
+              fontface = "italic") +
+    geom_text(aes(x = as.Date("2022/07/01"), 
+                  y = -13, 
+                  #hjust = 0,
+                  label = "Drier than average"),
               check_overlap = T,
-              fontface = "italic",
-              color = "gray50") +
-  
+              color = "gray50",
+              fontface = "italic") +
     scale_x_date(date_breaks = "1 month", 
                  date_labels = "%b") +
+    scale_y_continuous(limits = c(-15, 15), breaks = c(-15, -10, -5, 0, 5, 10, 15)) +
     labs(x = NULL,
-         y = "Monthly average temperature,\ndeviation from average (deg F)")
+         y = "Cumulative precipitation,\ndeviation from average (inches)")
   
-  
-}  
-
+}
 
 
 
 # put together ------------------------------------------------------------
 
-fig_t + fig_cp + 
-  plot_annotation(title = str_wrap("Temperature and precipitation deviations compared to long-term averages at the 17 trial sites show universally cool Aprils and dry springs", width = 80))
 
-ggsave("figs/wea.png", width = 7, height = 4)
+my_wea_theme <- 
+  theme_bw() +
+  theme(panel.grid.minor = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        panel.background = element_blank(),
+        panel.border = element_blank()) 
+
+
+theme_set(my_wea_theme)
+
+fig_cp <- 
+  CumPrecipFig(f.data = cp, f.last_name = "bakehouse") +
+  scale_color_manual(values = c(pfi_blue, pfi_blue)) + 
+  scale_size_manual(values = c(1, 1)) + 
+  scale_alpha_manual(values = c(1, 1))
+
+fig_cp
+
+
+fig_t <- 
+  TempFig(f.data = t, f.last_name = "bakehouse") +
+  scale_color_manual(values = c(pfi_red, pfi_red)) + 
+  scale_size_manual(values = c(1, 1)) + 
+  scale_alpha_manual(values = c(1, 1))
+
+fig_t
+
+fig_t + fig_cp + 
+  plot_annotation(
+    title = str_wrap("Weather deviations from historical averages show cool Aprils, dry springs and wet summers at all 17 trials", width = 80))
+
+ggsave("figs/wea.png", width = 8, height = 6)
 
 
 # loop it through sites-----------------------------------------------------------------

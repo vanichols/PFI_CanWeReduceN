@@ -7,7 +7,6 @@ library(ggarchery)
 rm(list = ls())
 
 source("code/00_fig-things.R")
-theme_set(my_wind_theme)
 
 # data --------------------------------------------------------------------
 
@@ -59,6 +58,31 @@ m |>
   facet_grid(.~ assump)
 
 
+
+# theme -------------------------------------------------------------------
+
+my_money_theme <- 
+  theme_bw() +
+  theme(
+    axis.title.y = element_text(angle = 0,
+                                vjust = 0.5),
+    axis.title = element_text(size = rel(1.0)),
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    plot.title = element_text(size = rel(1.2)),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    plot.caption = element_text(hjust = 0),
+    panel.border = element_blank()
+    
+  ) 
+
+
+theme_set(my_money_theme)
+
+
+
+
+
 #--show ranges of high and low
 m |> 
   mutate(most_savings = crev_lo - ncost_hi,
@@ -91,15 +115,18 @@ m |>
     y = avg_savings),
     color = "white",
     size = 1) +
-  geom_text(aes(x = 1, y = 180), label = "Financial advantage from reduced nitrogen rate", check_overlap = T, hjust = 0,
-            fontface = "italic", color = "gray50") +
-  geom_text(aes(x = 1, y = -400), label = "Financial loss from reduced nitrogen rate", check_overlap = T, hjust = 0,
-            fontface = "italic", color = "gray50") +
-  scale_y_continuous(labels = label_dollar(), limits = c(-410, 200), breaks = c(-400, -300, -200, -100, 0, 100, 200)) + 
+  geom_text(aes(x = 8.5, y = 300), label = "Financial advantage from reduced nitrogen rate", check_overlap = T, 
+            #hjust = 0,
+            fontface = "italic", color = pfi_blue) +
+  geom_text(aes(x = 8.5, y = -300), label = "Financial loss from reduced nitrogen rate", check_overlap = T, 
+            #hjust = 0,
+            fontface = "italic", color = pfi_orange) +
+  scale_y_continuous(labels = label_dollar(), limits = c(-400, 400),
+                     breaks = c(-400, -300, -200, -100, 0, 100, 200, 300, 400)) + 
   scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
   labs(x = NULL,
-       y = "Dollars per acre",
-       title = str_wrap("7 of the 17 trials saw a financial advantage to the reduced nitrogen rate under average price scenarios, 10 saw financial losses",
+       y = "Dollars\nper acre",
+       title = str_wrap("Seven of the 17 trials saw a financial advantage to the reduced nitrogen rate under average price scenarios",
                           width = 80))
 
 ggsave("figs/monetary-diffs.png", width = 8, height = 6)
