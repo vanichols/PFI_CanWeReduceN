@@ -29,41 +29,24 @@ cp <- read_csv("data_wea/cum-precip-in.csv") |>
 
 # precipitation -----------------------------------------------------------
 
-#--monthly deviation from long term average, precip
-#--I don't like this one
-p |>
-  group_by(city, mm, name) |>
-  summarise(value = mean(value, na.rm = T)) |>
-  pivot_wider(names_from = name, values_from = value) |> 
-  mutate(dev_p = p_22-p_lt,
-         date = paste("2022", mm, "01", sep = "/"),
-         date_mm = as_date(date)) |> 
-  ggplot(aes(date_mm, dev_p)) + 
-  geom_line(aes(group = city, 
-                color = city == "osage", 
-                size = city == "osage", 
-                alpha = city == "osage"),
-            show.legend = F) + 
-  geom_hline(yintercept = 0) +
-  geom_text(aes(x = as_date("2022/01/01"),
-                y = 0.15,
-                hjust = 0,
-                label = "Wetter than average"),
-            check_overlap = T,
-            fontface = "italic") +
-  geom_text(aes(x = as_date("2022/01/01"),
-                y = -0.07,
-                hjust = 0,
-                label = "Drier than average"),
-            check_overlap = T,
-            fontface = "italic") +
-  scale_color_manual(values = c(pfi_blue, pfi_orange)) + 
-  scale_size_manual(values = c(0.5, 2)) +
-  scale_alpha_manual(values = c(0.5, 1)) +
-  scale_x_date() +
-  labs(x = NULL,
-       y = "Difference in\nmonthly precipitation\nfrom 30-year average\n(inches)")
+#--cumulative precip, lt by location
+cp |> 
+  filter(name == "cp_lt") |> 
+  group_by(last_name) |> 
+  summarise(cp = max(value))
 
+cp |> 
+  mutate(dd_date = as.Date(doy - 1, 
+                           origin = "2022/01/01")) |> 
+  pivot_wider(names_from = name, values_from = value) |> 
+  mutate(dev_cp = cp_22 - cp_lt) |> 
+  group_by(last_name) |> 
+  filter(doy == 305) |> 
+  summarise(cp = max(dev_cp)) |> 
+  arrange(cp)
+
+
+ln_key
 
 #--deviation from long term average, cum precip
 
@@ -98,33 +81,15 @@ CumPrecipFig <- function(f.data = cp, f.last_name = "bakehouse") {
       scale_x_date(date_breaks = "1 month", 
                    date_labels = "%b") +
       labs(x = NULL,
-           y = "Cumulative precipitation deviation (inches)")
+           y = "Cumulative precipitation,\ndeviation from average (inches)")
     
   }
   
-fig_cp <- 
-  CumPrecipFig(f.data = cp, f.last_name = "bakehouse")  +
-  scale_size_manual(values = c(0.6, 0.6)) +
-  scale_alpha_manual(values = c(1, 1)) + 
-  scale_color_manual(values = c(pfi_blue, pfi_blue))
-
-fig_cp
-
-#--single place highlighted test
-
-CumPrecipFig(data = cp) +
-  scale_size_manual(values = c(0.5, 2)) +
-  scale_alpha_manual(values = c(0.5, 1)) + 
-  scale_color_manual(values = c(pfi_blue, pfi_yellow))
-
 
 
 # temperature -------------------------------------------------------------
 
 #--deviation from long term average, temp
-
-
-#--I can't figure out how to make it draw the 'selceted one' last
 
 TempFig <- function(f.data = t, f.last_name = "bakehouse") {
   
@@ -149,7 +114,7 @@ TempFig <- function(f.data = t, f.last_name = "bakehouse") {
     geom_text(aes(x = as_date("2022/01/01"),
                   y = 3,
                   hjust = 0,
-                  label = "Hotter than average"),
+                  label = "Warmer than average"),
               check_overlap = T,
               fontface = "italic",
               color = "gray50") +
@@ -164,35 +129,23 @@ TempFig <- function(f.data = t, f.last_name = "bakehouse") {
     scale_x_date(date_breaks = "1 month", 
                  date_labels = "%b") +
     labs(x = NULL,
-         y = "Monthly average temperature deviation (deg F)")
+         y = "Monthly average temperature,\ndeviation from average (deg F)")
   
   
 }  
 
-fig_t <- 
-  TempFig(f.data = t, f.last_name = "Bakehouse") +
-  scale_size_manual(values = c(0.6, 0.6)) +
-  scale_alpha_manual(values = c(1, 1)) + 
-  scale_color_manual(values = c(pfi_red, pfi_red))
-
-
-#--test single coop
-TempFig(f.data = t, f.last_name = "bakehouse") +
-  scale_size_manual(values = c(0.5, 2)) +
-  scale_alpha_manual(values = c(0.5, 1)) + 
-  scale_color_manual(values = c(pfi_red, pfi_yellow))
 
 
 
 # put together ------------------------------------------------------------
 
-fig_t + fig_cp
+fig_t + fig_cp + 
+  plot_annotation(title = str_wrap("Temperature and precipitation deviations compared to long-term averages at the 17 trial sites show universally cool Aprils and dry springs", width = 80))
 
 ggsave("figs/wea.png", width = 7, height = 4)
 
 
-
-# loop it -----------------------------------------------------------------
+# loop it through sites-----------------------------------------------------------------
 
 my_ln <- 
   ln_key |> 

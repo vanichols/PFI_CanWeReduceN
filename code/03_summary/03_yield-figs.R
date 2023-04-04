@@ -138,7 +138,7 @@ NUEFig <- function(data = tst2) {
     ) +
     scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) +
     labs(x = NULL,
-         y = "Nitrogen Use per Bushel\n(lb N/bu)",
+         y = "Nitrogen applied per\nbushel of corn yielded (lb N/bu)",
          title = "Nitrogen Use Metric")
   
   return(fig)

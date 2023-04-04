@@ -37,11 +37,11 @@ my_yld_theme <-
 my_wind_theme <- 
   theme_bw() +
   theme(
-    #axis.title.y = element_text(angle = 0,
-    #                            vjust = 0.5),
+    axis.title.y = element_text(angle = 0,
+                                vjust = 0.5),
     axis.title = element_text(size = rel(1.0)),
     axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
     plot.title = element_text(size = rel(1.2)),
     panel.grid.minor.x = element_blank(),
-    #plot.caption = element_text(hjust = 0)
+    plot.caption = element_text(hjust = 0)
   ) 
