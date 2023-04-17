@@ -7,7 +7,6 @@ library(ggarchery)
 rm(list = ls())
 
 source("code/00_fig-things.R")
-theme_set(my_wind_theme)
 
 # data --------------------------------------------------------------------
 
@@ -81,14 +80,15 @@ my_nue_theme <-
   theme(
     axis.title.y = element_text(angle = 0,
                                 vjust = 0.5),
-    axis.title = element_text(size = rel(1.0)),
+    axis.title = element_text(size = rel(1.1)),
     axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-    plot.title = element_text(size = rel(1.2)),
+    plot.title = element_text(size = rel(1.3)),
     panel.grid.minor = element_blank(),
     panel.grid.major.x = element_blank(),
-    plot.caption = element_text(hjust = 0),
-    panel.border = element_blank()
-    
+    plot.caption = element_text(hjust = 1),
+    panel.border = element_blank(),
+    plot.title.position = "plot",
+    plot.caption.position =  "plot"
   ) 
 
 
@@ -110,8 +110,9 @@ nue_dat_arrows <-
 ggplot() +
   geom_point(
     data = nue_dat,
-    aes(reorder(last_name, -typ), typ),
-    fill = pfi_green,
+    aes(reorder(last_name, -typ), typ,
+        fill = nue_sig),
+    show.legend = F,
     color = "black",
     pch = 21,
     size = 5
@@ -130,12 +131,14 @@ ggplot() +
             aes(reorder(last_name, -typ),  typ + 0.15, label = nue_sig),
             size = 5) +
   scale_y_continuous(limits = c(0, 2.5)) +
+  scale_fill_manual(values = c(pfi_green, pfi_tan)) +
   labs(
     x = NULL,
     y = "Nitrogen applied\nper unit corn produced\n(lb N/bu corn)",
-    title = str_wrap("Of the 17 trials, 15 saw significant reductions in nitrogen applied per unit corn yield at the reduced N rate", width = 70),
-    caption = "* = Statistiignificant change at a 95% confidence level\nNS = No statistically significant change"
+    title = str_wrap("Less nitrogen (N) applied per bushel of corn at the reduced N rate", width = 70),
+    subtitle = "Majority of trials saw significant reductions in N applied per bushel of corn",
+    caption = "* = Statistically significant change at a 95% confidence level\nNS = No significant change"
   )
 
-ggsave("figs/nue-change.png", width = 8, height = 6)
+ggsave("figs/nue-change.png", width = 7, height = 5)
 
