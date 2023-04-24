@@ -48,19 +48,31 @@ theme_set(my_yield_theme)
 
 # data --------------------------------------------------------------------
 
-
+#--yields
 y <- read_csv("data_tidy/yields.csv") |>
   filter(!is.na(yield_buac))
 
+#--stats
 s_raw <- read_csv("data_tidy/stats.csv")
 
-s <- 
+s_buac <- 
   s_raw |> 
   select(trt, estimate, last_name, diff_est, pval) |> 
   rename(yld_pval = pval,
          yld_mn = estimate,
-         yld_dif = diff_est)
+         yld_dif_buac = diff_est)
 
+s_pct <- 
+  s_buac |> 
+  filter(trt == "typ") %>% 
+  mutate(yld_dif_pct = yld_dif_buac/yld_mn * 100) %>% 
+  select(-trt, -yld_mn)
+  
+s <- 
+  s_buac %>% 
+  left_join(s_pct)
+
+#--nue
 nue <- read_csv("data_tidy/stats-nue.csv") |> 
   select(trt, estimate, last_name, diff_est, pval) |> 
   rename(nue_pval = pval,
@@ -85,7 +97,7 @@ d_raw <-
 
 d <- 
   d_raw |> 
-  select(last_name, yld_dif, yld_pval, nue_dif, nue_pval) |> 
+  select(last_name, yld_dif_buac, yld_dif_pct, yld_pval, nue_dif, nue_pval) |> 
   distinct() |> 
   mutate(yld_sig = ifelse(yld_pval < 0.05, "*", " "),
          nue_sig = ifelse(nue_pval < 0.05, "*", " "))
@@ -107,6 +119,16 @@ n_pct <-
   mutate(red_pct = (typ - red)/typ * 100)
 
 summary(n_pct$red_pct)
+library(ggridges)
+
+y %>% 
+  group_by(trt) %>% 
+  summarise(maxn = max(nrate_lbac, na.rm = T),
+            minn = min(nrate_lbac, na.rm = T))
+
+d %>% 
+  filter(yld_sig == " ") %>% 
+  arrange(yld_dif_buac)
 
 #--range in LSDs?
 s_raw |> 
@@ -120,29 +142,74 @@ y |>
   select(nrate_lbac) |> 
   summary(.)
 
-# yield diffs -------------------------------------------------------------
 
-#--make them colored by financial losses
+# N application rates -----------------------------------------------------
 
-d |> 
-  #--make it so it is red-typ
-  mutate(yld_dif = -yld_dif) |>
-  ggplot(aes(reorder(last_name, yld_dif), yld_dif))+ 
-  geom_col(aes(fill = yld_sig), color = "black", show.legend = F) +
-  geom_text(aes(reorder(last_name, yld_dif), yld_dif - 5, label = yld_sig)) +
-  # geom_text(x = 1, y = 10, label = "Yields increased at reduced N rate",
-  #           check_overlap = T, hjust = 0, fontface = "italic", 
-  #           color = pfi_blue) +
-  geom_text(x = 1, y = -60, label = "Yields decreased at reduced N rate",
-            check_overlap = T, hjust = 0, fontface = "italic",
-            color = pfi_orange) +
-  scale_y_continuous(limits = c(-65, 15)) +
-  scale_fill_manual(values = c(pfi_tan, pfi_orange)) +
-  labs(x = NULL,
-       y = "Change in corn yield\nwith reduced N rate\n(bu/ac)",
-       title = "") 
+y %>% 
+  select(last_name, trt, nrate_lbac) %>% 
+  mutate(trt_lab = ifelse(trt == "typ", "Typical N rate", "Reduced N rate\n(typical less 50 lb N/ac)")) %>% 
+  distinct() %>% 
+  ggplot(aes(nrate_lbac, trt_lab)) + 
+  geom_density_ridges(stat = "binline", aes(fill = trt), bins = 10, show.legend = F) + 
+  scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) + 
+  scale_x_continuous(breaks = seq(50, 300, 50)) +
+  theme(axis.text.x = element_text(angle = 0, hjust = 0.5),
+        axis.text.y = element_text(size = rel(1.2))) +
+  labs(x = "lb N per ac",
+       y = NULL,
+       title = "Typical N rates varied across cooperators",
+       subtitle = "Relative N reductions ranged from 16-45% of typical rate")
 
-ggsave("figs/yield-diff.png", width = 8, height = 6)
+y %>% 
+  select(nrate_lbac) %>% 
+  arrange(-nrate_lbac)
+
+#--get order I want them in
+my_order <- 
+  y %>% 
+  select(last_name, trt, nrate_lbac) %>% 
+  distinct() %>% 
+  filter(trt == "typ") %>% 
+  arrange(trt, nrate_lbac) %>% 
+  pull(last_name)
+
+
+# N reductions --------------------------------------------------------------
+
+
+y %>% 
+  select(last_name, trt, nrate_lbac) %>% 
+  distinct() %>% 
+  pivot_wider(names_from = trt, values_from = nrate_lbac) %>% 
+  mutate(xdif = typ - red) %>% 
+  arrange(xdif) %>% 
+  select(-typ) %>% 
+  pivot_longer(red:xdif) %>% 
+  rename(trt = name, nrate_lbac = value) %>% 
+  mutate(trt = ifelse(trt == "xdif", "Typical N rate", "Reduced N rate")) %>% 
+  left_join(n_pct %>% select(-red)) %>% 
+  mutate(trt_fct = factor(trt, levels = c("Typical N rate", "Reduced N rate")),
+         last_name = factor(last_name, levels = my_order)) %>% 
+  #--fig
+  ggplot(aes(last_name, nrate_lbac)) +
+  geom_col(aes(fill = trt_fct), color = "black") +
+  geom_text(aes(x = last_name, y = typ + 10,
+                label = paste0(round(red_pct, 0), "%")),
+            fontface = "italic") +
+  scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) + 
+  scale_y_continuous(breaks = seq(0, 300, 50),
+                     limits = c(0, 300)) +
+  labs(x = "Cooperator",
+       y = "Nitrogen applied\n(lb/ac)",
+       fill = NULL,
+       title = "Typical N rate treatments ranged from 108-264 lb N/ac",
+       subtitle = "Rates were reduced by 20-74 lb N/ac") + 
+  theme(legend.position = c(0.2, 0.9),
+        legend.text = element_text(size = rel(1.2)),
+        legend.background = element_blank())
+
+ggsave("figs/nrates.png", width = 8, height = 5)
+
 
 # yield diffs with money-------------------------------------------------------------
 
@@ -197,7 +264,7 @@ d |>
   labs(x = NULL,
        y = "Change in corn yield (bu/ac)\nwhen reducing nitrogen (N) rate by 50 lb N/ac",
        title = "Yield reductions smaller than 7 bu/ac resulted in financial savings",
-       subtitle = "Average financial outcome assuming $0.90/lb N and $6.75/bu",
+       subtitle = "Average financial outcome assuming $0.90/lb N and $6.59/bu",
        caption = "* = Significant change in yield at 95% confidence level")
 
 ggsave("figs/yield-diff.png", width = 7, height = 5)

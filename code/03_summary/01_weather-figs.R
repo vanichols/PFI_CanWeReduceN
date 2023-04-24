@@ -25,7 +25,12 @@ p <- read_csv("data_wea/precip-in.csv") |>
 cp <- read_csv("data_wea/cum-precip-in.csv") |> 
   left_join(ln_key)
 
-
+t %>% 
+  filter(city == "galva") %>% 
+  filter(mm == 4) %>% 
+  group_by(name) %>% 
+  summarise(value = mean(value))
+  
 
 
 # temperature -------------------------------------------------------------
@@ -153,11 +158,39 @@ my_wea_theme <-
 
 theme_set(my_wea_theme)
 
-fig_cp <- 
-  CumPrecipFig(f.data = cp, f.last_name = "bakehouse") +
-  scale_color_manual(values = c(pfi_blue, pfi_blue)) + 
-  scale_size_manual(values = c(1, 1)) + 
-  scale_alpha_manual(values = c(1, 1))
+
+fig_cp <-
+CumPrecipFig(f.data = cp, f.last_name = "bakehouse") +
+  scale_color_manual(values = c(pfi_blue, pfi_blue)) +
+  scale_size_manual(values = c(1, 1)) +
+  scale_alpha_manual(values = c(1, 1)) +
+  geom_text(aes(
+    x = as.Date("2022-05-01"),
+    y = -8,
+    label = "Dry springs"
+  ),
+  check_overlap = T) +
+  geom_segment(aes(
+    xend = as.Date("2022-03-01"),
+    yend = -2,
+    x = as.Date("2022-05-01"),
+    y = -7
+  ),
+  arrow = arrow()) +
+  geom_text(aes(
+    x = as.Date("2022-02-15"),
+    y = 9, 
+    label = "Wet summers"
+  ),
+  check_overlap = T) +
+  geom_segment(aes(
+    xend = as.Date("2022-06-1"),
+    yend = 7.5,
+    x = as.Date("2022-03-24"),
+    y = 8
+  ),
+  arrow = arrow())
+
 
 fig_cp
 
@@ -166,13 +199,22 @@ fig_t <-
   TempFig(f.data = t, f.last_name = "bakehouse") +
   scale_color_manual(values = c(pfi_red, pfi_red)) + 
   scale_size_manual(values = c(1, 1)) + 
-  scale_alpha_manual(values = c(1, 1))
+  scale_alpha_manual(values = c(1, 1)) + 
+    geom_text(aes(x = as.Date("2022-06-28"), y = -2.5, label = "Cool Aprils"),
+              check_overlap = T) + 
+    geom_segment(aes(xend = as.Date("2022-04-15"),
+                     yend = -4.5, 
+                     x = as.Date("2022-06-05"),
+                     y = -2.7),
+                 arrow = arrow())
+  
 
 fig_t
 
 fig_t + fig_cp + 
   plot_annotation(
-    title = str_wrap("Weather deviations from historical averages show cool Aprils, dry springs and wet summers at all 17 trials", width = 80))
+    title = str_wrap("Weather deviations from historical averages", width = 80),
+    subtitle = str_wrap("Cool Aprils, dry springs and wet summers at all 17 trials", width = 80))
 
 ggsave("figs/wea.png", width = 8, height = 6)
 

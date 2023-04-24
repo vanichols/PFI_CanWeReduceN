@@ -1,3 +1,6 @@
+#-notes:
+# 4/24 - reran using data-supported prices for corn
+
 library(tidyverse)
 library(scales)
 library(lubridate)
@@ -7,57 +10,6 @@ library(ggarchery)
 rm(list = ls())
 
 source("code/00_fig-things.R")
-
-# data --------------------------------------------------------------------
-
-y <- read_csv("data_tidy/yields.csv") |>
-  filter(!is.na(yield_buac))
-
-#--make up dollar amounts
-#--N high price = $1.20/lb
-#--N low price = $0.60/lb
-n_hi <- 1.2
-n_lo <- 0.6
-n_av <- mean(c(n_hi, n_lo))
-
-#--corn price = $7/bu
-crn_hi <- 8
-crn_lo <- 5.5
-crn_av <- mean(c(crn_hi, crn_lo))
-
-m <- 
-  y |> 
-  group_by(last_name, trt) |> 
-  summarise(nrate_lbac = mean(nrate_lbac, na.rm = T),
-            yield_buac = mean(yield_buac, na.rm = T)) |> 
-  mutate(ncost_hi = n_hi * nrate_lbac,
-         ncost_lo = n_lo * nrate_lbac,
-         ncost_av = n_av * nrate_lbac,
-         
-         crev_hi = crn_hi * yield_buac,
-         crev_lo = crn_lo * yield_buac,
-         crev_av = crn_av * yield_buac) 
-
-
-m |> 
-  mutate(most_savings = crev_lo - ncost_hi,
-         least_savings = crev_hi - ncost_lo,
-         avg_savings = crev_av - ncost_av) |> 
-  select(last_name, trt, contains("savings"))|> 
-  pivot_longer(most_savings:avg_savings) |> 
-  pivot_wider(names_from = trt, values_from = value) |> 
-  mutate(savings = red - typ,
-         assump = case_when(
-           name == "most_savings" ~ "Expensive N, low priced corn",
-           name == "least_savings" ~ "Cheap N, high priced corn",
-           name == "avg_savings" ~ "Avg N, avg priced corn",
-         )) |> 
-  ggplot() + 
-  geom_point(aes(reorder(last_name, typ), typ), color = pfi_blue) + 
-  geom_point(aes(last_name, red), color = pfi_green) + 
-  facet_grid(.~ assump)
-
-
 
 # theme -------------------------------------------------------------------
 
@@ -82,33 +34,9 @@ my_money_theme <-
 theme_set(my_money_theme)
 
 
+# data --------------------------------------------------------------------
 
-
-
-# money -------------------------------------------------------------
-
-
-#--show ranges of high and low
-
-d_money <- 
-  m |> 
-  mutate(most_savings = crev_lo - ncost_hi,
-         least_savings = crev_hi - ncost_lo,
-         avg_savings = crev_av - ncost_av) |> 
-  select(last_name, trt, contains("savings")) %>%
-  pivot_longer(most_savings:ncol(.)) |> 
-  pivot_wider(names_from = trt, values_from = value) |> 
-  mutate(savings = red - typ) |> 
-  select(last_name, name, savings) |> 
-  pivot_wider(names_from = name, values_from = savings) |> 
-  mutate(clr = case_when(
-    (most_savings < 0 & least_savings < 0) ~ "bad",
-    (most_savings > 0 & least_savings < 0) ~ "neutral",
-    (most_savings > 0 & least_savings > 0) ~ "good",
-  )) 
-
-d_money |> 
-  write_csv("data_tidy/money.csv")
+d_money <- read_csv("data_tidy/money.csv")
 
 
 # full figure -------------------------------------------------------------
@@ -153,21 +81,7 @@ ggsave("figs/monetary-diffs.png", width = 7, height = 5)
 # mock figure -------------------------------------------------------------
 
 #--show ranges of high and low
-m |> 
-  mutate(most_savings = crev_lo - ncost_hi,
-         least_savings = crev_hi - ncost_lo,
-         avg_savings = crev_av - ncost_av) |> 
-  select(last_name, trt, contains("savings")) %>%
-  pivot_longer(most_savings:ncol(.)) |> 
-  pivot_wider(names_from = trt, values_from = value) |> 
-  mutate(savings = red - typ) |> 
-  select(last_name, name, savings) |> 
-  pivot_wider(names_from = name, values_from = savings) |> 
-  mutate(clr = case_when(
-    (most_savings < 0 & least_savings < 0) ~ "bad",
-    (most_savings > 0 & least_savings < 0) ~ "neutral",
-    (most_savings > 0 & least_savings > 0) ~ "good",
-  )) |>
+d_money |> 
   filter(last_name == "Waldo") |> 
   ggplot() + 
   geom_hline(yintercept = 0) +
@@ -214,10 +128,10 @@ m |>
   scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
   labs(x = NULL,
        y = "Dollars\nper acre",
-       title = str_wrap("Three price scenarios*",
-                        width = 80),
-       subtitle = "Best, average, and worst savings potential",
-       caption = "*Nitrogen prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.50-$8.00/bu")
+       title = str_wrap("Three price scenarios* when reducing nitrogen application to corn by 50 units",
+                        width = 50),
+       subtitle = "Best, average, and worst savings potential examples",
+       caption = "*Nitrogen prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu")
 
 ggsave("figs/monetary-example.png", width = 5, height = 5)
 
