@@ -31,7 +31,9 @@ t %>%
   group_by(name) %>% 
   summarise(value = mean(value))
   
-
+cp %>% 
+  filter(last_name == "anderson") %>% 
+  filter(doy == max(doy))
 
 # temperature -------------------------------------------------------------
 

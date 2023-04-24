@@ -36,8 +36,23 @@ theme_set(my_money_theme)
 
 # data --------------------------------------------------------------------
 
-d_money <- read_csv("data_tidy/money.csv")
+d_stats <- 
+  read_csv("data_tidy/stats-savings.csv")
 
+d_money <- 
+  read_csv("data_tidy/money.csv") %>% 
+  group_by(last_name) %>% 
+  summarise(across(contains("savings"), ~mean(.x, na.rm = T))) %>% 
+  mutate(clr = case_when(
+    (most_savings < 0 & least_savings < 0) ~ "bad",
+    (most_savings > 0 & least_savings < 0) ~ "neutral",
+    (most_savings > 0 & least_savings > 0) ~ "good",
+  )) %>% 
+  left_join(d_stats %>% select(last_name, pval)) %>% 
+  mutate(sig = ifelse(pval < 0.05, "*", "NS"))
+  
+
+  
 
 # full figure -------------------------------------------------------------
 
@@ -83,6 +98,7 @@ ggsave("figs/monetary-diffs.png", width = 7, height = 5)
 #--show ranges of high and low
 d_money |> 
   filter(last_name == "Waldo") |> 
+  mutate(last_name = "Example") %>% 
   ggplot() + 
   geom_hline(yintercept = 0) +
   geom_segment(aes(
@@ -124,16 +140,15 @@ d_money |>
   scale_y_continuous(labels = label_dollar(),
                      limits = c(-10, 110)) +
   expand_limits(x = 3)+
-  theme(axis.text.x = element_blank()) +
   scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
   labs(x = NULL,
        y = "Dollars\nper acre",
-       title = str_wrap("Three price scenarios* when reducing nitrogen application to corn by 50 units",
-                        width = 50),
+       title = str_wrap("Three price scenarios* when reducing nitrogen application to corn",
+                        width = 70),
        subtitle = "Best, average, and worst savings potential examples",
        caption = "*Nitrogen prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu")
 
-ggsave("figs/monetary-example.png", width = 5, height = 5)
+ggsave("figs/monetary-example.png", width = 6, height = 5)
 
 
 

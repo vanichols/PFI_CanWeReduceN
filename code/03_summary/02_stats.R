@@ -8,10 +8,8 @@ library(emmeans)
 
 rm(list = ls())
 
-source("code/00_fig-things.R")
-theme_set(my_wea_theme)
 
-# data --------------------------------------------------------------------
+# yields ------------------------------------------------------------------
 
 d <- read_csv("data_tidy/yields.csv")
 
@@ -33,7 +31,7 @@ ln <-
 tst <- y |> filter(last_name == "Boyer")
 
 
-# fixed effect stats -------------------------------------------------------------------
+# 1. fixed effect stats -------------------------------------------------------------------
 
 mod <- lm(yield_buac ~ trt, data = tst)
 
@@ -88,7 +86,7 @@ res |>
   write_csv("data_tidy/stats.csv")
 
 
-# random effect stats -------------------------------------------------------------------
+# 2. random effect stats -------------------------------------------------------------------
 
 library(LSDer)
 library(lme4)
@@ -146,7 +144,7 @@ res2 |>
 
 
 
-# NUE ---------------------------------------------------------------------
+# 3. NUE ---------------------------------------------------------------------
 
 mod3 <- lm(nue ~ trt, data = tst)
 
@@ -192,4 +190,46 @@ res3
 
 res3 |> 
   write_csv("data_tidy/stats-nue.csv")
+
+
+
+# 4. money -------------------------------------------------------------------
+
+m <- read_csv("data_tidy/money.csv")
+
+tst4 <- m %>% filter(last_name == "Amundson")
+
+mod4 <- t.test(tst4$avg_savings)
+
+tidy(mod4)
+
+res4 <- NULL
+
+for (i in 1:length(ln)) {
+  
+  tmp.ln <- ln[i]
+  d.tmp <- m |> filter(last_name == tmp.ln) 
+  
+  tmp.mod <- t.test(d.tmp$avg_savings)
+  
+  tmp.p <- 
+    tidy(tmp.mod) |> 
+    select(estimate, p.value)
+  
+  tmp.res <-
+    tmp.p |>
+    rename(pval = p.value) %>% 
+    mutate(
+      last_name = tmp.ln)
+  
+  res4 <- bind_rows(res4, tmp.res)
+  
+}
+
+res4
+
+
+res4 |> 
+  write_csv("data_tidy/stats-savings.csv")
+
 
