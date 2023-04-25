@@ -10,8 +10,8 @@ source("code/00_fig-things.R")
 
 # data --------------------------------------------------------------------
 
-
-y <- read_csv("data_tidy/yields.csv") |>
+y <- 
+  read_csv("data_tidy/yields.csv") |>
   filter(!is.na(yield_buac))
 
 s_raw <- read_csv("data_tidy/stats.csv")
@@ -20,15 +20,17 @@ s <-
   s_raw |> 
   select(trt, estimate, last_name, diff_est, pval) |> 
   rename(yld_pval = pval,
-         yld_mn = estimate,
+         yld = estimate,
          yld_dif = diff_est)
 
-nue <- read_csv("data_tidy/stats-nue.csv") |> 
+nue <- 
+  read_csv("data_tidy/stats-nue.csv") |> 
   select(trt, estimate, last_name, diff_est, pval) |> 
   rename(nue_pval = pval,
-         nue_mn = estimate,
+         nue = estimate,
          nue_dif = diff_est)
 
+#--get rid of reps
 d_raw <- 
   y |> 
   left_join(s) |> 
@@ -36,42 +38,13 @@ d_raw <-
   select(-rep, -yield_buac) |> 
   distinct()
 
+#--assign significance
 d <- 
   d_raw |> 
-  select(last_name, yld_dif, yld_pval, nue_dif, nue_pval) |> 
-  distinct() |> 
   mutate(yld_sig = ifelse(yld_pval < 0.05, "*", " "),
-         nue_sig = ifelse(nue_pval < 0.05, "*", " "))
-
-my_names <- 
-  d |> 
-  pull(last_name) |> 
-  unique()
-
-
-# simple summarise --------------------------------------------------------
-
-#--how much did they reduce it?
-n_pct <-
-  y |> 
-  select(-yield_buac, -rep)  |> 
-  distinct() |> 
-  pivot_wider(names_from = trt, values_from = nrate_lbac) |> 
-  mutate(red_pct = (typ - red)/typ * 100)
-
-summary(n_pct$red_pct)
-
-#--range in LSDs?
-s_raw |> 
-  pull(lsd) |> 
-  summary(.)
-  
-  
-#--range in typical rates?
-y |> 
-  filter(trt == "typ") |> 
-  select(nrate_lbac) |> 
-  summary(.)
+         nue_sig = ifelse(nue_pval < 0.05, "*", " ")) %>% 
+  select(last_name, trt, yld, yld_dif, yld_sig, nue, nue_dif, nue_sig) |> 
+  distinct() 
 
 # theme -------------------------------------------------------------------
 
@@ -92,9 +65,28 @@ my_nue_theme <-
   ) 
 
 
-theme_set(my_nue_theme)
 
-# nue ---------------------------------------------------------------------
+# nue yields---------------------------------------------------------------------
+
+
+d %>% 
+  mutate(nue2 = 1/nue) %>% 
+  ggplot(aes(reorder(last_name, nue2, max), nue2)) + 
+  geom_point(aes(size = yld, color = nue_sig, shape = trt)) +
+  labs(title = "Less nitrogen application per bushel is possible for 15 of the 17 sites",
+       subtitle = "At 14 sites, N was reduced too much")
+
+#--using a n response curve, you want the change in bu/n to be close to 0?? Ugh I need to think
+
+d %>% 
+  mutate(nue_dif2 = 1/nue_dif) %>% 
+  ggplot(aes(reorder(last_name, nue_dif2, max), nue_dif2)) + 
+  geom_point(aes(size = yld, color = nue_sig)) +
+  labs(title = "Less nitrogen application per bushel is possible for 15 of the 17 sites",
+       subtitle = "At 14 sites, N was reduced too much")
+
+# nue trad---------------------------------------------------------------------
+
 
 #--arrows from old nue to new
 nue_dat <- 
