@@ -11,6 +11,9 @@ pfi_orange <- "#ca703d"
 pfi_dkgreen <- "#1a431d"
 pfi_green <- "#80921b"
 
+theme_border <- theme_gray() + 
+  theme(plot.background = element_rect(fill = NA, colour = 'black', linewidth = 3))
+
 
 my_yield_theme <- 
   theme_bw() +

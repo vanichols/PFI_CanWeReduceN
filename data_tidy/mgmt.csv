@@ -1,0 +1,390 @@
+last_name,activity_measurement,date_ymd,notes
+Amundson,field history -- 2017-2021,NA,"2017: corn, strip-till, rye cover crop seeded in fall; 2018: soybeans, no-till, rye cover crop seeded in fall; 2019: corn, no-till, rye cover crop seeded in fall; 2020: soybeans, no-till, rye cover crop seeded in fall; 2021: oats, no-till, red clover cover crop frost-seeded to oats"
+Amundson,previous crop,NA,oats
+Amundson,no. reps,NA,4 reps
+Amundson,strip size,NA,40 ft x 1925 ft
+Amundson,treatments,NA,trt 1 typical rate: 130 lb n/ac ;trt 2 reduced rate: 80 lb n/ac
+Amundson,cover crop -- seeding,2021-03-22,red clover frost-seeded to oats at 8 lb/ac
+Amundson,cover crop -- termination,2022-05-14,"barrage hf (2,4-d); surestartii, roundup powermax 3"
+Amundson,fall grazing -- begin,NA,NA
+Amundson,fall grazing -- end,NA,NA
+Amundson,spring grazing -- begin,NA,NA
+Amundson,spring grazing -- end,NA,NA
+Amundson,corn planting,2022-05-14,"33,000 sds/ac, 30"" row spacing"
+Amundson,tillage,2021-11-06,fall strip-tillage with dawn pluribus
+Amundson,tillage,2022-05-13,refreshed strips
+Amundson,fertilizer,2021-11-06,fall strip till liquid blend (3-9-12-.2zn) 20-61.2-81.73-1.4 lb npkzn/ac
+Amundson,fertilizer,2022-05-14,"planter fertilizer, 2x0 band, 5 gal 32% uan+5 gal ats/ac, 24.3 lbs n /ac"
+Amundson,fertilizer,2022-06-03,sidedress uan(32)
+Amundson,weed control,2022-05-14,"barrage hf (2-4,d) (8 oz), surestart ii (2 pnt) , roundup powermax 3 (32 oz), zaar (16 oz)"
+Amundson,weed control,2022-06-07,"status (5 oz), smoke (9.75)"
+Amundson,weed control,2022-06-22,"sequence (2.5 pnts), explorer (3 oz), atrazine(1 pnt), smoke surfactant(9.75 oz)"
+Amundson,soil sampling,NA,NA
+Amundson,corn harvest,2022-10-23,NA
+Amundson,observation,NA,NA
+Anderson,field history -- 2017-2021,NA,NA
+Anderson,previous crop,NA,corn
+Anderson,no. reps,NA,4 reps
+Anderson,strip size,NA,40 ft wide x length of field = 2.11 ac/strip. strip is 16 rows wide (30-in. row-widths)
+Anderson,treatments,NA,"trt 1 typical rate: 157.5 lb n/ac as turkey litter, uan+ats, uan sidedress ;trt 2 reduced rate: 105 lb n/ac as turkey litter, uan+ats"
+Anderson,cover crop -- seeding,2021-08-23,cereal rye overseeded into standing corn with hagie highboy at 65 lb/ac
+Anderson,cover crop -- termination,2022-05-21,all trts: volley atz lite nxt (60 oz/ac)
+Anderson,fall grazing -- begin,NA,NA
+Anderson,fall grazing -- end,NA,NA
+Anderson,spring grazing -- begin,2022-01-03,"49 bred heifers turned out 1/3/22, out until 3/17/21, then out occassionally weather dependent in reducing numbers as heifers had calves and were relocated. on 4/10/21, heifers were no longer accessing field, but cow herd was moved to field, 27 cows starting 4/10 and calving"
+Anderson,spring grazing -- end,2022-05-15,all cows removed with cows finished calving
+Anderson,corn planting,2022-05-19,"35,500 seeds/ac in 30-in. row-widths"
+Anderson,tillage,2022-05-18,vertical tillage using a kuhn krause excelerator-soil surface was crusted from cattle grazing and made seed depth control challenging
+Anderson,fertilizer,2022-02-03,turkey litter applied at 2.3 ton/ac. 57.7-49-38.5 lb npk per ton of litter. resulted in 132.7 lb n/ac; 113 lb p/ac; 89 lb k/ac. available n per isu = 0.55*132.7 = 73 lb n/ac
+Anderson,fertilizer,2022-05-18,all trts: applied with sprayer: 32 lb n/ac and 8.6 lb s/ac as uan(28) and ats
+Anderson,fertilizer,2022-06-07,trt 1: 52.5 lb n/ac as uan(28). $0.61/lb n (nathan's quoted price); $11.35/ac application cost (isu custom rate)
+Anderson,weed control,NA,"generic callisto (3 oz/ac); buccaneer (generic glyphosate, 24 oz/ac)"
+Anderson,weed control,NA,NA
+Anderson,pest control,NA,NA
+Anderson,soil sampling,NA,NA
+Anderson,corn harvest,2022-10-14,cash price at our local co-op close to the harvesting date was $6.53/bushel.
+Anderson,observation,NA,NA
+Bakehouse,field history -- 2017-2021,NA,NA
+Bakehouse,previous crop,NA,soybeans
+Bakehouse,no. reps,NA,4 replications
+Bakehouse,strip size,NA,"30 ft x 1,150 ft"
+Bakehouse,treatments,NA,trt 1 typical rate: 151 lb n/ac;trt 2 reduced rate: 95 lb n/ac
+Bakehouse,cover crop -- seeding,NA,no cover crop
+Bakehouse,cover crop -- termination,NA,no cover crop
+Bakehouse,fall grazing -- begin,2021-11-01,"18 dry, pregnant cows; 5 dry, pregnant heifers; 1 beef steer; 1 bull"
+Bakehouse,fall grazing -- end,NA,NA
+Bakehouse,spring grazing -- begin,NA,NA
+Bakehouse,spring grazing -- end,NA,NA
+Bakehouse,corn planting,2022-05-11,"34,000 seeds/ac in 30-in. row-widths"
+Bakehouse,tillage,NA,NA
+Bakehouse,fertilizer,2022-04-27,"both trts: 70 lb n/ac as uan(28) and ats, applied with liquid toolbar"
+Bakehouse,fertilizer,2022-06-18,trt 1: 81 lb n/ac; trt 2: 25 lb n/ac. both as uan(32) with n-fixx
+Bakehouse,weed control,2022-05-11,"both trts: 2,4-d (1 pt/ac); glyphosate (24 oz/ac)"
+Bakehouse,weed control,2022-06-12,both trts: balance flex (4 oz/ac); halexgt (3.6 pt/ac); optima (8 oz/ac)
+Bakehouse,pest control,NA,NA
+Bakehouse,soil sampling,NA,NA
+Bakehouse,corn harvest,2022-09-29,NA
+Bakehouse,observation,2022-09-30,"some visual difference on the yield map, though not as pronounced as i would've expected"
+Bakehouse,observation,2022-09-30,"dry dry dry year, somewhere around 18"" (will get official info from nws records). no visible difference throughout growing season"
+Bardole,field history -- 2017-2021,NA,"2017: soybeans, no-till; 2018: corn, strip-till; 2019: soybeans, no-till; 2020: corn, strip-till, fall 2019 hog manure; 2021: soybeans, no-till, oats and turnip cover crops applied before soy harvest"
+Bardole,previous crop,NA,NA
+Bardole,no. reps,NA,NA
+Bardole,strip size,NA,NA
+Bardole,treatments,NA,trt 1 typical rate: 165 lb n/ac ;trt 2 reduced rate: 115 lb n/ac
+Bardole,cover crop -- seeding,2021-09-01,1 bu. oats 2 lbs. turnips seeded with hagie into standing crop
+Bardole,cover crop -- termination,NA,NA
+Bardole,fall grazing -- begin,NA,NA
+Bardole,fall grazing -- end,NA,NA
+Bardole,spring grazing -- begin,NA,NA
+Bardole,spring grazing -- end,NA,NA
+Bardole,corn planting,2022-04-23,"34,000 seeds/ac in 30-in. row-widths"
+Bardole,tillage,2021-11-11,strip-tilled
+Bardole,fertilizer,2021-11-11,"trt 1: 135 lbs n/ac as nh3 full rate, 60lbs p, 60lbs k; trt 2: 85 lb n/ac as nh3, 60 lb p/ac, 60 lb k/ac; cost of n = $0.45/lb n"
+Bardole,fertilizer,2022-07-19,both trts: 30 lb n/ac as uan(32)
+Bardole,weed control,2022-05-23,"staunch ii 1 qt./a, durango 1 pt./a"
+Bardole,weed control,2022-06-13,"glyphosate5.4 26 oz/a, explorer 3 oz /a, atrazine 90df .25 lbs/a"
+Bardole,pest control,NA,NA
+Bardole,soil sampling,NA,NA
+Bardole,corn harvest,2022-10-03,NA
+Bardole,observation,2022-09-07,not seeing any differences among the strips
+Bennett,field history -- 2017-2021,NA,"2017: soybeans, no-till; 2018: corn, strip-till, cereal rye cover crop in fall; 2019: soybeans, no-till, chicken litter in fall; 2020: corn, strip-till; 2021: soybeans, no-till"
+Bennett,previous crop,NA,soybeans in 2021
+Bennett,no. reps,NA,4 reps
+Bennett,strip size,NA,"30 ft x 1,164 ft"
+Bennett,treatments,NA,trt 1 typical rate: 189 lb n/ac ;trt 2 reduced rate: 139 lb n/ac
+Bennett,cover crop -- seeding,NA,NA
+Bennett,cover crop -- termination,NA,NA
+Bennett,fall grazing -- begin,NA,NA
+Bennett,fall grazing -- end,NA,NA
+Bennett,spring grazing -- begin,NA,NA
+Bennett,spring grazing -- end,NA,NA
+Bennett,corn planting,2022-05-08,"kinze 3200 12 row 30-in. rows, 34,000 seeds/ac. golden harvest g07f23-gt, 107 day rr corn, no rootworm trait, in-furrow bifenthrin insecticide"
+Bennett,tillage,2021-11-01,2021 fall strip till - dawn pluribus/montag dry fertilizer
+Bennett,fertilizer,2021-11-01,dry fert. 39-46-60-24 lb npks/ac banded w/ strip till
+Bennett,fertilizer,2022-06-08,trt 1: 150 lb n/ac as uan(32) sidedressed with nitrain urease inhibitor; trt 2: 100 lb n/ac as uan(32) sidedressed with nitrain urease inhibitor. uan(32) cost = $545/ton uan. uan(32) weighs 11.06 per gallon.
+Bennett,weed control,2022-06-03,"all trts: resicore (80 oz/ac); atrazine 4l (1 qt/ac); buccaneer 5.4 extra (glyphosate, 32 oz/ac)"
+Bennett,weed control,NA,NA
+Bennett,pest control,NA,NA
+Bennett,soil sampling,NA,NA
+Bennett,corn harvest,2022-10-18,corn price = $7/bu
+Bennett,observation,NA,NA
+Borchardt,field history -- 2017-2021,NA,soybean-corn rotation since 2017; strip-till every year except soybeans in 2019 (no-till)
+Borchardt,previous crop,NA,soybeans
+Borchardt,no. reps,NA,4 reps
+Borchardt,strip size,NA,1.63 acres
+Borchardt,treatments,NA,trt 1 typical rate: 136 lb n/ac ($111/ac); trt 2 reduced rate: 106 lb n/ac ($81/ac)
+Borchardt,cover crop -- seeding,NA,NA
+Borchardt,cover crop -- termination,NA,NA
+Borchardt,fall grazing -- begin,NA,NA
+Borchardt,fall grazing -- end,NA,NA
+Borchardt,spring grazing -- begin,NA,NA
+Borchardt,spring grazing -- end,NA,NA
+Borchardt,corn planting,2022-05-11,"all trts: 33,500 seeds/ac in 30-in. row-widths"
+Borchardt,tillage,2021-10-21,all trts: strip tillage
+Borchardt,fertilizer,2021-10-21,all trts: broadcast 36 lb n/ac
+Borchardt,fertilizer,2022-05-15,all trts: 50 lb n/ac as uan(32) with herbicide
+Borchardt,fertilizer,2022-06-22,trt 1: 50 lb n/ac sidedressed; trt 2: 20 lb n/ac sidedressed
+Borchardt,fertilizer,2022-05-11,"all trts: in-furrow with planter 2 lb/ac of 0-52-34 and 1 oz/ac of fish, sugar, carbon, biological"
+Borchardt,fertilizer,2021-10-21,all trts: stip-till banded 0-0-15-10.5
+Borchardt,weed control,2022-05-15,all trts: balance pro
+Borchardt,weed control,2022-06-01,all trts: halex gt; atrazine
+Borchardt,pest control,NA,NA
+Borchardt,soil sampling,NA,NA
+Borchardt,corn harvest,2022-10-25,NA
+Borchardt,observation,NA,NA
+Boyer,field history -- 2017-2021,NA,"2017: rye crop, no-till, multispecies summer cover crop; 2018: soybeans, no-till, rye crop seeded in fall; 2019: rye crop, no-till, multispecies summer cover crop; 2020: soybeans, no-till, rye crop seeded in fall; 2021: rye crop, soybeans relay-cropped into rye, no-till"
+Boyer,previous crop,NA,cereal rye seed crop + soybean relay crop
+Boyer,no. reps,NA,4 reps
+Boyer,strip size,NA,30 ft x 2100 ft
+Boyer,treatments,NA,trt 1 typical rate: 180 lb n/ac ;trt 2 reduced rate: 130 lb n/ac
+Boyer,cover crop -- seeding,2021-08-07,volunteer rye from rye harvest during summer 2021
+Boyer,cover crop -- termination,NA,NA
+Boyer,fall grazing -- begin,NA,NA
+Boyer,fall grazing -- end,NA,NA
+Boyer,spring grazing -- begin,NA,NA
+Boyer,spring grazing -- end,NA,NA
+Boyer,corn planting,2022-05-15,"all trts: 34,000 seeds/ac in 30-in. rows"
+Boyer,tillage,NA,NA
+Boyer,fertilizer,2021-11-20,150# 0-0-60
+Boyer,fertilizer,2022-05-15,both trts: 30 lb n/ac and 20 lb s/ac applied with planter in 2x0x2 arrangement. n cost = $1/lb n; s cost = $0.95/lb s
+Boyer,fertilizer,2022-06-15,trt 1: 150 lb n/ac as uan(32); trt 2: 100 lb n/ac as uan(32). n cost = $1/lb n
+Boyer,weed control,2022-05-16,"4.9 pt-harness xtra, 36 oz ru"
+Boyer,weed control,2022-06-17,"laudis-3oz, 31.5 oz atrazine 4l, 22 oz ru,"
+Boyer,pest control,NA,NA
+Boyer,soil sampling,NA,NA
+Boyer,corn harvest,2022-10-18,no visual difference all year
+Boyer,observation,NA,NA
+Deal,field history -- 2017-2021,NA,"2017: soybeans, no-till, fall cereal rye cover crop; 2018: corn, no-till, fall cereal rye cover crop; 2019: soybeans, no-till, fall cereal rye cover crop; 2020: corn, no-till, fall cereal rye + winter wheat cover crops; 2021: soybeans, no-till, fall cereal rye + winter wheat cover crops"
+Deal,previous crop,NA,soybeans in 2021
+Deal,no. reps,NA,4 reps
+Deal,strip size,NA,60 ft x 2010 ft; 2.8 acres
+Deal,treatments,NA,trt 1 typical rate: 214 lb n/ac;trt 2 reduced rate: 164 lb n/ac
+Deal,cover crop -- seeding,2021-10-11,"cereal rye & winter wheat mix (approx. 50/50); ~1.2 bu/acre; drilled (8"" rows)"
+Deal,cover crop -- termination,2022-05-11,roundup powermax 3 - 32 oz/acre; trip flex ii (generic sure start (2 pt/acre); optima (4 oz/acre) interlock (4 oz/acre)
+Deal,fall grazing -- begin,NA,NA
+Deal,fall grazing -- end,NA,NA
+Deal,spring grazing -- begin,NA,NA
+Deal,spring grazing -- end,NA,NA
+Deal,corn planting,2022-05-17,"36,400 seeds/ac in 30-in. row-widths"
+Deal,tillage,NA,NA
+Deal,fertilizer,2021-12-29,"all trts: dry fertilizer - average of 14-68-89-20 lb npks/ac, surface spread"
+Deal,fertilizer,2022-05-11,trt 1: 150 lb n/ac as uan(32) applied with cover crop burndown; trt 2: 112.5 lb n/ac as uan(32) applied with cover crop burndown. n cost = $0.996/lb n
+Deal,fertilizer,2022-06-24,trt 1: 50 lb n/ac as uan(32) sidedressed; trt 2: 37.5 lb n/ac as uan(32) sidedressed
+Deal,weed control,NA,NA
+Deal,weed control,NA,NA
+Deal,pest control,NA,NA
+Deal,soil sampling,NA,NA
+Deal,corn harvest,2022-10-26,NA
+Deal,observation,2022-05-11,more n will be applied to trt 1 at sidedress to achieve 50 unit difference from trt 2
+Deal,observation,2022-05-11,field has good fertility levels (have spent several years building p&k levels)
+Deal,observation,2022-05-11,field has been continuous no-till / cover crop since 2016
+Deal,observation,2022-05-11,field is pattern-tiled
+Deal,observation,2022-05-11,late spring due to wet & cold. burndown/pre-emerge applied on a very hot day. could notice the impact of the spray within a couple hours (agronomist said it was the 32% more than the glyphosate). planting date was also later than desired due to spring rains & cold. pattern tiling was helpful in this field.
+Deal,observation,NA,field has good fertility levels (have spent several years building p&k levels)
+Deal,observation,NA,field has been continuous no-till / cover crop since 2016
+Deal,observation,NA,field is pattern-tiled
+Deal,observation,NA,the planting layout appears to have hybrids cross the trial area. will review this in the data to see if there's a significant impact on the yields
+Deal,observation,NA,"after lots of conversation with agronomist & other advisers with cover crop experience, i cut down significantly on the time between the rye burndown & planting date (only 5 days). did this because of the late date and because the burndown appeared to act relatively quickly"
+Deal,observation,2022-12-01,"even though it created a negative profitability impact for me, i very much appreciate having a better sense of the appropriateness of my n applications."
+Dooley,field history -- 2017-2021,NA,NA
+Dooley,previous crop,NA,rye crop in 2017
+Dooley,no. reps,NA,4 reps
+Dooley,strip size,NA,30 ft wide
+Dooley,treatments,NA,trt 1 typical rate: ;trt 2 reduced rate:
+Dooley,cover crop -- seeding,2021-07-28,"high-diversity mix (>15 species); 45lbs/ac; direct-drilled; 7.5"" rows"
+Dooley,cover crop -- termination,2022-05-20,"clarity (16oz), roundup powermax (30oz), infantry (63oz)"
+Dooley,fall grazing -- begin,NA,none
+Dooley,fall grazing -- end,NA,NA
+Dooley,spring grazing -- begin,NA,none
+Dooley,spring grazing -- end,NA,NA
+Dooley,corn planting,2022-05-17,"33,000 pop; 30"" rows"
+Dooley,tillage,NA,NA
+Dooley,fertilizer,2022-05-20,"both trts: 32% liquid n (100lbs n/ac), broadcast w/ burndown"
+Dooley,fertilizer,NA,NA
+Dooley,weed control,NA,NA
+Dooley,weed control,NA,NA
+Dooley,pest control,NA,NA
+Dooley,soil sampling,NA,NA
+Dooley,corn harvest,NA,will harvest middle 15 ft of each strip
+Dooley,observation,NA,NA
+Frederick,previous crop,NA,soybeans in 2021
+Frederick,strip length,NA,NA
+Frederick,strip width,NA,50 ft (width of anhydrous ammonia applicator)
+Frederick,number reps,NA,4 replications of two treatments = 8 strips total
+Frederick,treatment 1,NA,typical (high) nitrogen rate: 150 lb n/ac
+Frederick,treatment 2,NA,reduced (low) nitrogen rate: 100 lb n/ac
+Frederick,fertilizer,2022-11-15,trt 1: 150 lb n/ac as anhydrous ammonia with n-serv; trt 2: 100 lb n/ac as anhydrous ammonia with n-serv
+Frederick,fertilizer,NA,NA
+Frederick,plant cover crop,2021-09-14,84 lb/ac winter wheat aerially applied
+Frederick,terminate cover crop,2022-05-10,32 oz/ac roundup
+Frederick,fall grazing -- begin,2021-11-15,32 bred cows
+Frederick,fall grazing -- end,NA,NA
+Frederick,spring grazing -- begin,NA,NA
+Frederick,spring grazing -- end,2022-05-10,32 cow/calf pairs
+Frederick,tillage,2022-05-20,disked ground. grazed longer than intended and had to tear out some cow tracks.
+Frederick,plant corn,2022-05-22,"37000 population, 20"" rows"
+Frederick,weed control,NA,NA
+Frederick,weed control,NA,NA
+Frederick,harvest corn,2022-10-13,NA
+Fredericks,field history -- 2017-2021,NA,"no-till soybeans, strip-till corn with cereal rye cover crop each winter since 2017"
+Fredericks,previous crop,NA,soybeans
+Fredericks,no. reps,NA,4 reps
+Fredericks,strip size,NA,15 ft x 1708 ft
+Fredericks,treatments,NA,trt 1 typical rate: 160 lb n/ac ;trt 2 reduced rate: 110 lb n/ac
+Fredericks,cover crop -- seeding,2021-10-18,"49# cereal rye and 2# winter camelina. drilled in 7.5"" rows"
+Fredericks,cover crop -- termination,2022-05-18,sequence 3.5 pt + dicamba .5 pt
+Fredericks,fall grazing -- begin,NA,NA
+Fredericks,fall grazing -- end,NA,NA
+Fredericks,spring grazing -- begin,NA,NA
+Fredericks,spring grazing -- end,NA,NA
+Fredericks,corn planting,2022-05-07,"34,680 seeds/ac in 30-in. rows. split-planter trial with two hybrids. hybrid 1 = dk56-65; hybrid 2 = pioneer p0688"
+Fredericks,tillage,NA,NA
+Fredericks,fertilizer,2021-10-22,"both trts: 300# 4-21-36 plus 30# sulfur in strip till 7"" deep. resulted in 12 lb n/ac"
+Fredericks,fertilizer,2022-05-07,"both trts: 28 lb n/ac, 8 lb p/ac and 4 lb s/ac dribble band at planting 2 x 0"
+Fredericks,fertilizer,2022-06-20,trt 1: sidedress 120 lb n/ac as uan(32) with coulter applicator; trt 2: sidedress 70 lb n/ac as uan(32) with coulter applicator. $0.76/lb n
+Fredericks,weed control,2022-06-17,lexar 3.5 pt and powermax 16 oz
+Fredericks,weed control,NA,NA
+Fredericks,pest control,NA,NA
+Fredericks,soil sampling,NA,NA
+Fredericks,corn harvest,2022-10-19,NA
+Fredericks,observation,NA,NA
+Harvey,field history -- 2017-2021,NA,"2017: soybeans, no-till, fall cereal rye cover crop; 2018: corn, no-till, fall cereal rye cover crop; 2019: soybeans, no-till, fall cereal rye cover crop; 2020: corn, no-till, cereal rye cover crop; 2021: soybeans, no-till, cereal rye cover crop"
+Harvey,previous crop,NA,soybeans
+Harvey,no. reps,NA,4 reps
+Harvey,strip size,NA,20 ft x 875 ft
+Harvey,treatments,NA,trt 1 typical rate: 114 lb n/ac ;trt 2 reduced rate: 65 lb n/ac
+Harvey,cover crop -- seeding,2021-10-05,cereal rye drilled in 10-in. rows at 50 lb/ac
+Harvey,cover crop -- termination,2022-04-26,22 oz/ac of roundup weathermax. cereal rye was 7 in. tall
+Harvey,fall grazing -- begin,NA,NA
+Harvey,fall grazing -- end,NA,NA
+Harvey,spring grazing -- begin,NA,NA
+Harvey,spring grazing -- end,NA,NA
+Harvey,corn planting,2022-04-27,"30-in. row-widths at 32,000 seeds/ac"
+Harvey,tillage,NA,NA
+Harvey,fertilizer,2022-01-16,both trts: 6-30-30 dry p/k applied to soybean stubble
+Harvey,fertilizer,2022-04-27,both trts: 5 gallons 6-24-6 applied in furrow at planting. net weight of product per gallon = 11.09 lb. total pounds of product applied with 5 gal = 55.45. amounts to 3 lb n/ac (n cost = $1/lb n = $3/ac)
+Harvey,fertilizer,2022-05-20,trt 1: uan 32% sidress application standard rate is 30 gallon/acre (105 lb n/ac). trt 2: reduced rate at 16 gallon/acre (56 lb n/ac). n cost = $1.20/ lb n
+Harvey,weed control,2022-06-03,atrazine 90df and calisto
+Harvey,weed control,NA,NA
+Harvey,pest control,NA,NA
+Harvey,soil sampling,NA,NA
+Harvey,corn harvest,2022-10-19,"combine head is 15 ft wide, allowing for 2 rows between harvested strips"
+Harvey,observation,2022-10-19,plot was free of weeds and standing well
+Harvey,observation,2022-10-19,"started out with good soil moisture and tiles trickling, only 1 good rain in june and remained drier than normal for the rest of the growimg season"
+Harvey,observation,2022-10-19,drier than normal for the rest of the growing season
+Prevo,field history -- 2017-2021,NA,"2017: soybeans, fall wheat cover crop, fall manure, fall-winter grazing cows; 2018: corn, fall cereal rye cover crop, fall-winter grazing cows; 2019: soybeans, fall cereal rye cover crops, fall manure, fall-winter grazing cows; 2020: corn, fall cereal rye cover crop, fall-winter grazing cows; 2021: soybeans, fall cereal rye cover crop"
+Prevo,previous crop,NA,soybeans
+Prevo,no. reps,NA,5 reps
+Prevo,strip size,NA,30 ft x 1400 ft
+Prevo,treatments,NA,trt 1 typical rate: 200 lb n/ac fall manure + 46 lb n/ac uan(32) sidedress; trt 2 reduced rate: 200 lb n/ac fall manure
+Prevo,cover crop -- seeding,2021-10-10,cereal rye drilled in 7.5-in. row-widths
+Prevo,cover crop -- termination,2022-05-11,both trts: roundup powermax (32 oz/ac); banvel (1 pt/ac); dual (1 pt/ac)
+Prevo,fall grazing -- begin,NA,NA
+Prevo,fall grazing -- end,NA,NA
+Prevo,spring grazing -- begin,NA,NA
+Prevo,spring grazing -- end,NA,NA
+Prevo,corn planting,2022-05-09,"both trts: 32,000 seeds/ac; 30-in. rows"
+Prevo,tillage,NA,NA
+Prevo,fertilizer,2021-11-18,both trts: liquid hog manure injected to soybean stubble; 200-120-150 lb npk/ac
+Prevo,fertilizer,2022-06-15,trt 1: 13 gal/ac uan (32) resulted in 46 lb n/ac applied
+Prevo,weed control,2022-06-04,both trts: callisto (3 oz/ac); atrazine (0.5 lb/ac); roundup powermax (20 oz/ac)
+Prevo,weed control,NA,NA
+Prevo,pest control,NA,NA
+Prevo,soil sampling,NA,NA
+Prevo,corn harvest,2022-09-25,NA
+Prevo,observation,2022-07-04,corn was visually more green where 32% was applied approximately 2 weeks after application
+Prevo,observation,2022-07-04,applied 32% every other 12 rows accross 20 acre field. resulted in 46 lb n/ac difference between typical and reduced
+Sieren,field history -- 2017-2021,NA,soybeans-corn since 2017. cereal rye each fall that is grazed by cattle. hog manure in each fall to soybean stubble.
+Sieren,previous crop,NA,soybeans
+Sieren,no. reps,NA,4 reps
+Sieren,strip size,NA,20 ft wide
+Sieren,treatments,NA,trt 1 typical rate: 258.6 lb n/ac; trt 2 reduced rate: 199 lb n/ac
+Sieren,cover crop -- seeding,2021-11-06,home-raised vns cereal rye drilled at 63 lb/ac in 9-in. row-widths
+Sieren,cover crop -- termination,2022-05-14,"both trts: glystar 5+ (24 oz/ac); 2,4-d lv-6 (8 oz/ac); ams (2.55 lb/ac); coc adjuvant (0.64 qt/100 gal)"
+Sieren,fall grazing -- begin,2021-10-15,20 head of angus beef cows
+Sieren,fall grazing -- end,2021-11-20,grazing concluded after 36 days
+Sieren,spring grazing -- begin,NA,NA
+Sieren,spring grazing -- end,NA,NA
+Sieren,corn planting,2022-05-09,all trts
+Sieren,tillage,2022-04-28,both trts: shank strip-tillage
+Sieren,fertilizer,2021-11-10,"3,550 gal/ac of liquid swine manure. 56-19-42 npk per 1,000 gal. assume 75% n availability, resulted in 149.1 lb n/ac; 67.5 lb p/ac; 149 lb k/ac"
+Sieren,fertilizer,2022-04-28,both trts: strip-tilled per acre-dry; 50.5/lbs 21-0-0-24 (10.6 lb n/ac); 75/lbs 11-52-0 (8.25 lb n/ac); 10/lbs 0-0-90 sulfur; 10/lbs microsync=$70.70/a
+Sieren,fertilizer,2022-05-09,both trts: 8.84 gal/ac uan(32) resulted in 31.3 lb n/ac applied at corn planting
+Sieren,fertilizer,2022-06-17,trt 1: 16.8 gal/ac uan(32) resulted in 59.5 lb n/ac applied at sidedress with coulter-nozzle. nutrisphere n stabilizer included
+Sieren,weed control,2022-06-03,both trts: status (4 oz/ac); ams (2.55 lb/ac); nis adjuvant (1 qt/100 gal)
+Sieren,weed control,NA,NA
+Sieren,pest control,NA,NA
+Sieren,soil sampling,NA,NA
+Sieren,corn harvest,NA,NA
+Sieren,observation,2022-05-12,"my planter fert was giving me fits, and i didn't get as much n applied as i wanted, so it was reducing the amount all by itself!  i'll figure out what i need for the two rates, and make it up when i sidedress the rest."
+Sieren,observation,2022-06-17,sidedressed 32% n on whole field except the 4 reduced rate reps which didn't get any. resulted in 59.5 lb n/ac difference between typical and reduced.
+Sieren,observation,2022-10-24,"this was strip-tilled without anhydrous, so i think my n was short up front, since i didn't get as much on with the planter as i had hoped.  i think i lost some moisture with the strip-till pass, which hurt as well.  every 1/2"" of moisture was needed this year!  maybe the rye took too much before termination as well!"
+Sieren,observation,2022-10-24,"we should've had abundant n from the fall applied manure, but it was either leached too deep, or the roots didn't have enough moisture to find it.  same with the side dressed n...it should've been sufficient but the yield results clearly show it wasn't.  it might have been more effective if it had been applied with a y-drop, instead of in the dry row middles, where the roots probably couldn't get to it all. "
+Sieren,observation,2022-10-24,"i think it was planted too heavy at 36,000.  32,000 would've yielded just as well this year.  the ear size was small, which was also a hint of too little n available at v5-v6, when ear size is determined."
+Sieren,observation,2022-10-24,"this field started firing a month before my others did, which also indicated an n deficiency.  just not enough n at the right time, in the right place, where it was available to the plants.  oh, yeah, more water please!"
+Sieren,observation,2022-10-24,"i've been wanting to get away from the extra trip with the strip-till, and this year might've convinced me to do it!  i had good results here at home with it, but the no-till was also good across the road at 150 bpa, and that's my most drought prone farm with its thinner timber soil!  just a lot of variability everywhere this year! "
+Veenstra1,field history -- 2017-2021,NA,"2017: soybeans, fall cereal rye cover crop; 2018: corn, fall cereal rye cover crop; 2019: soybeans, fall cereal rye cover crop; 2020: corn, fall cereal rye, rapeseed, turnip cover crops; 2021: soybeans, fall cereal rye, turnip cover crops"
+Veenstra1,previous crop,NA,soybeans
+Veenstra1,no. reps,NA,4 reps
+Veenstra1,strip size,NA,"30 ft x 1,500 ft"
+Veenstra1,treatments,NA,trt 1 typical rate: 158 lb n/ac ;trt 2 reduced rate: 108 lb n/ac
+Veenstra1,cover crop -- seeding,2021-10-15,60 lb ceal rye broadcast. dry fall not a lot of growth
+Veenstra1,cover crop -- termination,2022-05-11,"sprayed 32oz mad dog, 48oz acuron"
+Veenstra1,fall grazing -- begin,NA,NA
+Veenstra1,fall grazing -- end,NA,NA
+Veenstra1,spring grazing -- begin,NA,NA
+Veenstra1,spring grazing -- end,NA,NA
+Veenstra1,corn planting,2022-05-13,"34,000 seeds/ac in 30-in. rows"
+Veenstra1,tillage,NA,NA
+Veenstra1,fertilizer,2022-05-11,both trts: 18 lb n/ac as uan(32) with cover crop termination
+Veenstra1,fertilizer,2022-05-13,both trts: 60 lb n/ac as uan(32) on top behind planter
+Veenstra1,fertilizer,2022-05-23,trt 1: 80 lb n/ac as uan(32); trt 2: 30 lb n/ac as uan(32)
+Veenstra1,weed control,2022-06-02,"both trts: makeze (roundup) 32oz, strike force 8 oz, radiate 2oz, reicore 40oz."
+Veenstra1,weed control,NA,NA
+Veenstra1,pest control,NA,NA
+Veenstra1,soil sampling,NA,NA
+Veenstra1,corn harvest,2022-10-26,NA
+Veenstra1,observation,2022-08-16,"still don’t see any streaking, got an inch of rain last week."
+Waldo,field history -- 2017-2021,NA,"2017: soybeans, no-till; 2018: corn, no-till, rye crop seeded in fall; 2019: rye crop, millet+sorghum-sudan+oat cover crop mix after rye cut and baled; 2020: corn in 60-in. rows with grass+legume mix interseeded v5; 2021: soybeans, no-till, rye cover crop in fall"
+Waldo,previous crop,NA,soybeans in 2021
+Waldo,no. reps,NA,NA
+Waldo,strip size,NA,20 ft wide x length of field
+Waldo,treatments,NA,trt 1 typical rate: 264 lb n/ac ;trt 2 reduced rate: 190 lb n/ac
+Waldo,cover crop -- seeding,NA,cereal rye seeded fall 2021
+Waldo,cover crop -- termination,2022-05-20,"2 lbs ams, 44 oz roundup powermax"
+Waldo,fall grazing -- begin,NA,NA
+Waldo,fall grazing -- end,NA,NA
+Waldo,spring grazing -- begin,NA,NA
+Waldo,spring grazing -- end,NA,NA
+Waldo,corn planting,2022-05-14,"34,000 population, 60"" rows"
+Waldo,tillage,2022-05-13,"light field cultivation pass to level out ridges in field from previous 60"" corn crop"
+Waldo,fertilizer,2022-05-07,"both trts: 3500 gallons/acre of liquid hog manure injected early may. analysis revealed 54.3 lb n/1,000 gal. total units n applied = 190 lb n/ac"
+Waldo,fertilizer,2022-07-07,trt 1: 32% uan 22 gallons sidedressed amounts to 74 lb n/ac
+Waldo,weed control,2022-06-21,"2 lbs ams, 44 oz roundup powermax, 2 oz status"
+Waldo,weed control,NA,NA
+Waldo,pest control,NA,NA
+Waldo,soil sampling,NA,NA
+Waldo,corn harvest,2022-10-25,NA
+Waldo,observation,2023-01-09,"that's pretty great news that the yields were that close and there was no statistically significant difference! certainly doesn't make sense to be sidedressing on top of manure application with those results, and we'll be changing our program next year based on what we've found this year"
+Veenstra2,field history -- 2017-2021,NA,"2017: soybeans, fall cereal rye cover crop; 2018: corn, fall cereal rye cover crop; 2019: soybeans, fall cereal rye cover crop; 2020: corn, fall cereal rye, rapeseed, turnip cover crops; 2021: soybeans, fall cereal rye, turnip cover crops"
+Veenstra2,previous crop,NA,soybeans
+Veenstra2,no. reps,NA,4 reps
+Veenstra2,strip size,NA,"30 ft x 1,500 ft"
+Veenstra2,treatments,NA,trt 1 typical rate: 158 lb n/ac ;trt 2 reduced rate: 108 lb n/ac
+Veenstra2,cover crop -- seeding,2021-10-15,60 lb ceal rye broadcast. dry fall not a lot of growth
+Veenstra2,cover crop -- termination,2022-05-11,"sprayed 32oz mad dog, 48oz acuron"
+Veenstra2,fall grazing -- begin,NA,NA
+Veenstra2,fall grazing -- end,NA,NA
+Veenstra2,spring grazing -- begin,NA,NA
+Veenstra2,spring grazing -- end,NA,NA
+Veenstra2,corn planting,2022-05-13,"34,000 seeds/ac in 30-in. rows"
+Veenstra2,tillage,NA,NA
+Veenstra2,fertilizer,2022-05-11,both trts: 18 lb n/ac as uan(32) with cover crop termination
+Veenstra2,fertilizer,2022-05-13,both trts: 60 lb n/ac as uan(32) on top behind planter
+Veenstra2,fertilizer,2022-05-23,trt 1: 80 lb n/ac as uan(32); trt 2: 30 lb n/ac as uan(32)
+Veenstra2,weed control,2022-06-02,"both trts: makeze (roundup) 32oz, strike force 8 oz, radiate 2oz, reicore 40oz."
+Veenstra2,weed control,NA,NA
+Veenstra2,pest control,NA,NA
+Veenstra2,soil sampling,NA,NA
+Veenstra2,corn harvest,2022-10-26,trt 1: rep 1: field had some green snap that might explain why the yields don't seem to match the reduction of n. corn was shorter and dryer than most of the rest of the field. maybe soil type and the dry year. possible the plane spraying fungicide missed or ran out of product on this area.
+Veenstra2,observation,2022-07-06,did have around 15% green snap

@@ -2,6 +2,7 @@
 #--get temperature at 2 m height
 #--get corrected precipitation
 #--note it takes a while to run
+#--reran 4/25/23 bc thigns weren't matching the hand downloaded data https://power.larc.nasa.gov/data-access-viewer/
 
 library(nasapower)
 library(tidyverse)
