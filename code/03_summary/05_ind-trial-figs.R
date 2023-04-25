@@ -14,18 +14,55 @@ theme_set(my_combo_theme)
 d <- read_csv("data_tidy/yields.csv")
 s <- read_csv("data_tidy/stats.csv")
 
-m <- read_csv("data_tidy/money.csv") %>% 
+
+d_stats <- 
+  read_csv("data_tidy/stats-savings.csv")
+
+
+#--money
+
+d_money_raw <- 
+  read_csv("data_tidy/money.csv") 
+
+d_money <- 
+  d_money_raw %>%
+  pivot_longer(3:ncol(.))  %>% 
+  left_join(d_stats %>% select(-estimate) %>% rename(name = var)) %>% 
+  group_by(last_name) %>% 
+  mutate(pval_max = max(pval),
+         value_min = min(value, na.rm = T),
+         value_max = max(value, na.rm = T)) %>%
+  ungroup() %>% 
+  mutate(fin_sig = ifelse(pval_max < 0.05, "*", "NS"),
+         clr = case_when(
+           (value_max < 0 & value_min < 0) ~ "bad",
+           (value_max > 0 & value_min < 0) ~ "neutral",
+           (value_max > 0 & value_min > 0) ~ "good"
+         ))
+
+m <-
+  d_money %>%
+  select(last_name, value_min, value_max, fin_sig, clr) %>% 
+  left_join(
+    d_stats %>% 
+      filter(var == "avg_savings") %>% 
+      select(last_name, estimate) %>% 
+      rename(avg_savings = estimate)
+  ) %>% 
+  distinct() %>% 
   mutate(
-    most_savings_lab = ifelse(most_savings < 0, 
-                              paste0("-$", abs(round(most_savings, 0))), 
-                              paste0("+$", abs(round(most_savings, 0)))),
-    least_savings_lab = ifelse(least_savings < 0, 
-                               paste0("-$", abs(round(least_savings, 0))), 
-                               paste0("+$", abs(round(least_savings, 0)))),
+    value_max_lab = ifelse(value_max < 0, 
+                              paste0("-$", abs(round(value_max, 0))), 
+                              paste0("+$", abs(round(value_max, 0)))),
+    value_min_lab = ifelse(value_min < 0, 
+                               paste0("-$", abs(round(value_min, 0))), 
+                               paste0("+$", abs(round(value_min, 0)))),
     avg_savings_lab = ifelse(avg_savings < 0, 
                              paste0("-$", abs(round(avg_savings, 0))), 
                              paste0("+$", abs(round(avg_savings, 0))))
   ) 
+
+
 
 
 #--sifnificances are the same
@@ -221,8 +258,8 @@ MoneyFig <- function(data = tst3) {
       aes(
         x = last_name,
         xend = last_name,
-        y = least_savings,
-        yend = most_savings,
+        y = value_min,
+        yend = value_max,
         color = clr
       ),
       linewidth = 8,
@@ -239,15 +276,15 @@ MoneyFig <- function(data = tst3) {
     geom_segment(aes(
       xend = 1,
       x = 1.3,
-      yend = most_savings + 1,
-      y = most_savings + 12
+      yend = value_max + 1,
+      y = value_max + 12
     ),
     arrow = arrow(length = unit(0.2, "cm"))) +
     geom_segment(aes(
       xend = 1,
       x = 1.2,
-      yend = least_savings - 1,
-      y = least_savings - 15
+      yend = value_min - 1,
+      y = value_min - 15
     ),
     arrow = arrow(length = unit(0.2, "cm"))) +
     geom_segment(aes(
@@ -261,10 +298,10 @@ MoneyFig <- function(data = tst3) {
     geom_text(
       aes(
         x = 1.35,
-        y = most_savings + 12,
+        y = value_max + 12,
         label = paste0(
           "Best-case, ",
-          most_savings_lab,
+          value_max_lab,
           "\n  (expensive N,\n  low corn revenue)"
         )
       ),
@@ -276,10 +313,10 @@ MoneyFig <- function(data = tst3) {
     geom_text(
       aes(
         x = 1.25,
-        y = least_savings - 15,
+        y = value_min - 15,
         label = paste0(
           "Worst-case, ",
-          least_savings_lab,
+          value_min_lab,
           "\n  (cheap N,\n  high corn revenue)"
         )
       ),

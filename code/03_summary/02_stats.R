@@ -210,14 +210,31 @@ for (i in 1:length(ln)) {
   tmp.ln <- ln[i]
   d.tmp <- m |> filter(last_name == tmp.ln) 
   
-  tmp.mod <- t.test(d.tmp$avg_savings)
+  #--most savings
+  tmp.mod1 <- t.test(d.tmp$most_savings)
+  tmp.p1 <- 
+    tidy(tmp.mod1) |> 
+    select(estimate, p.value) %>% 
+    mutate(var = "most_savings")
+
+  #--avg savings
+  tmp.mod2 <- t.test(d.tmp$avg_savings)
+  tmp.p2 <- 
+    tidy(tmp.mod2) |> 
+    select(estimate, p.value) %>% 
+    mutate(var = "avg_savings")
   
-  tmp.p <- 
-    tidy(tmp.mod) |> 
-    select(estimate, p.value)
+  #--least savings
+  tmp.mod3 <- t.test(d.tmp$least_savings)
+  tmp.p3 <- 
+    tidy(tmp.mod3) |> 
+    select(estimate, p.value) %>% 
+    mutate(var = "least_savings")
   
   tmp.res <-
-    tmp.p |>
+    tmp.p1 |>
+    bind_rows(tmp.p2) %>% 
+    bind_rows(tmp.p3) %>% 
     rename(pval = p.value) %>% 
     mutate(
       last_name = tmp.ln)

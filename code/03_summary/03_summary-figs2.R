@@ -79,7 +79,7 @@ nue <- read_csv("data_tidy/stats-nue.csv") |>
          nue_mn = estimate,
          nue_dif = diff_est)
 
-
+#--money
 d_stats <- 
   read_csv("data_tidy/stats-savings.csv")
 
@@ -204,19 +204,114 @@ y %>%
 ggsave("figs/nrates.png", width = 8, height = 5)
 
 
-# yield diffs with money-------------------------------------------------------------
+# yield diffs, money-------------------------------------------------------------
 
 #--make them colored by financial losses
 
+#--remake the data
+d_stats <- 
+  read_csv("data_tidy/stats-savings.csv")
+
+d_money_raw <- 
+  read_csv("data_tidy/money.csv") 
+
+d_money <- 
+  d_money_raw %>%
+  pivot_longer(3:ncol(.))  %>% 
+  left_join(d_stats %>% select(-estimate) %>% rename(name = var)) %>% 
+  group_by(last_name) %>% 
+  mutate(pval_max = max(pval),
+         value_min = min(value, na.rm = T),
+         value_max = max(value, na.rm = T)) %>%
+  ungroup() %>% 
+  mutate(fin_sig = ifelse(pval_max < 0.05, "*", "NS"),
+         clr = case_when(
+           (value_max < 0 & value_min < 0) ~ "bad",
+           (value_max > 0 & value_min < 0) ~ "neutral",
+           (value_max > 0 & value_min > 0) ~ "good"
+         ))
+
+
+
+d_money_fig <-
+  d_money %>%
+  select(last_name, value_min, value_max, fin_sig, clr) %>% 
+  left_join(
+    d_stats %>% 
+      filter(var == "avg_savings") %>% 
+      select(last_name, estimate) %>% 
+      rename(avg_savings = estimate)
+  ) %>% 
+  distinct() %>% 
+  select(last_name, clr, avg_savings) %>% 
+  mutate(avg_savings_lab = ifelse(avg_savings < 0, 
+                                  paste0("-$", abs(round(avg_savings))),
+                                  paste0("$", round(avg_savings))),
+         avg_savings_lab = ifelse(clr == "neutral", " ", avg_savings_lab))
+
+d_new <- 
+  d_raw |> 
+  mutate(yld_sig = ifelse(yld_pval < 0.05, "*", " ")) %>% 
+  select(last_name, yld_dif_buac, yld_sig) |> 
+  distinct() |> 
+  left_join(d_money_fig)
+
+d_new |>
+  #--make it so it is red-typ
+  mutate(yld_dif_buac = -yld_dif_buac) %>% 
+  ggplot(aes(reorder(last_name, -yld_dif_buac), yld_dif_buac)) +
+  geom_col(aes(fill = clr),
+           color = "black",
+           show.legend = F) +
+  geom_text(aes(reorder(last_name, -yld_dif_buac), 
+                yld_dif_buac - 2, 
+                label = yld_sig,
+                hjust = 0,
+                vjust = 0.75)) +
+  #--savings values
+  geom_text(aes(reorder(last_name, -yld_dif_buac), 
+                y = 28, 
+                hjust = 1,
+                label = avg_savings_lab,
+                color = clr),
+            angle = 0,
+            show.legend = F,
+            fontface = "bold") +
+  coord_flip() +
+  my_yield_theme2 +
+  scale_y_continuous(limits = c(-60, 40),
+                     breaks = c(-60, -40, -20, 0,
+                                20, 40)) +
+  scale_fill_manual(values = c("neutral" = pfi_tan, 
+                               "good" = pfi_blue,
+                               "bad" = pfi_orange)) +
+  scale_color_manual(values = c("neutral" = pfi_tan, 
+                                "good" = pfi_blue,
+                                "bad" = pfi_orange)) +
+  labs(x = NULL,
+       y = "Change in corn yield (bu/ac)\nwith reduced N application",
+       title = "Significant yield reductions are not indicative of financial outcomes",
+       subtitle = "Average financial outcome assuming $0.90/lb N and $6.59/bu",
+       caption = "* = Significant change in yield at 95% confidence level")
+
+ggsave("figs/yield-diff.png", width = 7, height = 5)
+
+
+
+# yield diffs-------------------------------------------------------------
+
+#--make them colored by significance
+
 d |>
+  select(last_name:yld_sig) %>% 
+  distinct() %>% 
   #--make it so it is red-typ
   mutate(yld_dif_buac = -yld_dif_buac,
          clr = case_when(
-           (fin_sig == "**" & fin_outcome == "loss") ~ "org",
-           (fin_sig == "**" & fin_outcome == "savings") ~ "blu",
+           (yld_sig == "*" & yld_dif_buac > 0) ~ "blu",
+           (yld_sig == "*" & yld_dif_buac < 0) ~ "ora",
            TRUE ~ "gra"
-         )) |>
-  select(clr, everything()) %>% 
+         )) %>% 
   ggplot(aes(reorder(last_name, -yld_dif_buac), yld_dif_buac)) +
   geom_col(aes(fill = clr),
            color = "black",
@@ -226,40 +321,14 @@ d |>
                 label = yld_sig,
                 hjust = 0,
                 vjust = 0.75)) +
-  #--savings values
-  geom_text(data = . %>% filter(fin_sig == "**"),
-            aes(reorder(last_name, yld_dif_buac), 
-                y = 28, 
-                hjust = 1,
-                label = avg_savings,
-                color = clr),
-            angle = 0,
-            show.legend = F,
-            fontface = "bold") +
-  geom_text(data = . %>% filter(fin_sig == " "),
-            aes(reorder(last_name, yld_dif_buac), 
-                y = 28, 
-                hjust = 1,
-                label = avg_savings,
-                color = clr),
-            angle = 0,
-            show.legend = F,
-            fontface = "italic") +
   coord_flip() +
   my_yield_theme2 +
-  scale_y_continuous(limits = c(-60, 40),
-                     breaks = c(-60, -40, -20, 0,
-                                20, 40)) +
   scale_fill_manual(values = c("gra" = pfi_tan, 
                                "blu" = pfi_blue,
-                               "org" = pfi_orange)) +
-  scale_color_manual(values = c("gra" = pfi_tan, 
-                                "blu" = pfi_blue,
-                                "org" = pfi_orange)) +
-  geom_hline(yintercept = -7, linetype = "dashed") +
+                               "ora" = pfi_orange)) +
   labs(x = NULL,
        y = "Change in corn yield (bu/ac)\nwhen reducing nitrogen (N) rate by 50 lb N/ac",
-       title = "Yield reductions smaller than 7 bu/ac resulted in financial savings",
+       title = "Significant yield reductions are not indicative of financial outcomes",
        subtitle = "Average financial outcome assuming $0.90/lb N and $6.59/bu",
        caption = "* = Significant change in yield at 95% confidence level")
 

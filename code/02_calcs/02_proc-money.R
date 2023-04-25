@@ -54,3 +54,5 @@ d_money <-
 
 d_money |> 
   write_csv("data_tidy/money.csv")
+
+
