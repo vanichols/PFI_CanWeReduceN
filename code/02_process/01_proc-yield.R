@@ -249,3 +249,20 @@ d_all2 <-
 
 d_all2 |> 
   write_csv("data_tidy/yields.csv")
+
+
+
+# make df with diffs ------------------------------------------------------
+
+d_diff <- 
+  d_all2 %>% 
+  pivot_longer(nrate_lbac:yield_buac) %>% 
+  pivot_wider(names_from = trt, values_from = value) %>% 
+  mutate(dif = typ - red,
+         name = paste0("dif_", name)) %>% 
+  select(last_name, rep, name, dif) %>% 
+  pivot_wider(names_from = name, values_from = dif) %>% 
+  filter(!is.na(dif_yield_buac)) 
+
+d_diff %>% 
+  write_csv("data_tidy/trt-diffs.csv")
