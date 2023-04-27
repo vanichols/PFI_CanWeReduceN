@@ -61,6 +61,16 @@ my_order <-
   arrange(trt, nrate_lbac) %>% 
   pull(last_name)
 
+#--find half of difference to place percent labels
+pct_lab <- 
+  y %>% 
+  select(last_name, trt, nrate_lbac) %>% 
+  distinct() %>% 
+  pivot_wider(names_from = trt, values_from = nrate_lbac) %>% 
+  mutate(xdif = typ - red,
+         halfxdif = xdif/2,
+         pct_lab_y = red + halfxdif) %>% 
+  select(last_name, pct_lab_y)
 
 y %>% 
   select(last_name, trt, nrate_lbac) %>% 
@@ -73,14 +83,16 @@ y %>%
   rename(trt = name, nrate_lbac = value) %>% 
   mutate(trt = ifelse(trt == "xdif", "Typical N rate", "Reduced N rate")) %>% 
   left_join(n_pct %>% select(-red)) %>% 
+  left_join(pct_lab) %>% 
   mutate(trt_fct = factor(trt, levels = c("Typical N rate", "Reduced N rate")),
          last_name = factor(last_name, levels = my_order)) %>% 
   #--fig
   ggplot(aes(last_name, nrate_lbac)) +
   geom_col(aes(fill = trt_fct), color = "black") +
-  geom_text(aes(x = last_name, y = typ + 20,
+  geom_text(aes(x = last_name, y = pct_lab_y,
                 label = paste0(round(red_pct, 0), "%")),
-            fontface = "italic") +
+            fontface = "italic",
+            color = "white") +
   scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) + 
   scale_y_continuous(breaks = seq(0, 300, 50),
                      limits = c(0, 300)) +
@@ -88,7 +100,7 @@ y %>%
        y = "Nitrogen\napplied\n(lb/ac)",
        fill = NULL,
        title = "Typical N rate treatments ranged from 108-264 lb N/ac",
-       subtitle = "Rates were reduced by 20-74 lb N/ac") + 
+       subtitle = "On average, rates were reduced by 30% (20-74 lb N/ac lower than typical rate)") + 
   my_nitapp_theme 
 
 ggsave("figs/nrates.png", width = 8, height = 5.5)
