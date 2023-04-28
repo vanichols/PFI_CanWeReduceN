@@ -143,6 +143,10 @@ d_money_fig %>%
   mutate(value_min = value_min / dif_nrate_lbac,
          value_max = value_max/dif_nrate_lbac,
          avg_savings = avg_savings/dif_nrate_lbac,
+         last_name = case_when(
+           last_name == "Veenstra_1" ~ "Veenstra1",
+           last_name == "Veenstra_2" ~ "Veenstra2",
+           TRUE ~ last_name),
          last_name = paste0(last_name, ", ", round(dif_nrate_lbac), " lb/ac")) %>% 
   ggplot() + 
   geom_hline(yintercept = 0) +
@@ -180,9 +184,10 @@ d_money_fig %>%
   scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
   labs(x = NULL,
        y = "$/ac per\nlb N reduced",
-       title = str_wrap("11 trials saw potential for savings when reducing N rates",
+       title = str_wrap("Majority of trials saw potential for savings when reducing N rates",
                         width = 80),
        subtitle = "Three trials saw reliable savings of up to $0.50/ac per lb N reduced") + 
   my_money_theme
+
 
 ggsave("figs/monetary-diffs-per-unit-n.png", width = 7, height = 5)

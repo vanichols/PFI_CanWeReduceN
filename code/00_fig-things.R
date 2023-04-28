@@ -38,7 +38,7 @@ my_combo_theme <-
     strip.text = element_text(size = rel(1.2)),
     strip.background = element_rect(fill = pfi_tan),
     #axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
-    plot.title = element_text(size = rel(1.2)),
+    plot.title = element_text(size = rel(1.1)),
     panel.grid.minor = element_blank(),
     # panel.grid.major.y = element_blank(),
     plot.caption = element_text(hjust = 1),

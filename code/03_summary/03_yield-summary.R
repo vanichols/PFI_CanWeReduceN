@@ -33,6 +33,9 @@ my_yield_theme <-
 y <- read_csv("data_tidy/yields.csv") |>
   filter(!is.na(yield_buac))
 
+#--nrate and yield diffs by rep
+d_diffs <- read_csv("data_tidy/trt-diffs.csv")
+
 #--stats
 s_raw <- read_csv("data_tidy/stats.csv")
 
@@ -109,11 +112,20 @@ d_new <-
 
 # yield diffs, money-------------------------------------------------------------
 
+d_new %>% 
+  filter(last_name == "Bennett")
+
 #--make them colored by financial losses
 
 d_new |>
+  left_join(d_diffs %>% select(last_name, dif_nrate_lbac) %>% distinct()) %>% 
   #--make it so it is red-typ
-  mutate(yld_dif_buac = -yld_dif_buac) %>% 
+  mutate(yld_dif_buac = -yld_dif_buac, 
+         last_name = case_when(
+           last_name == "Veenstra_1" ~ "Veenstra1",
+           last_name == "Veenstra_2" ~ "Veenstra2",
+           TRUE ~ last_name),
+         last_name = paste0(last_name, ", ", round(dif_nrate_lbac), " lb/ac")) %>% 
   ggplot(aes(reorder(last_name, -yld_dif_buac), yld_dif_buac)) +
   geom_col(aes(fill = clr),
            color = "black",
@@ -144,7 +156,7 @@ d_new |>
                                 "good" = pfi_blue,
                                 "bad" = pfi_orange)) +
   labs(x = NULL,
-       y = "Change in corn yield (bu/ac) with reduced N application",
+       y = "Reduced N treatment corn yield (bu/ac)\nrelative to typical N treatment",
        title = "Significant yield reductions are not indicative of financial outcomes",
        subtitle = "Financial outcome assuming midpoint price scenario as reference",
        caption = "* = Significant change in yield at 95% confidence level")

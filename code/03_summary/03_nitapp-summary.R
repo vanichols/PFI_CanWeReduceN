@@ -33,9 +33,15 @@ my_nitapp_theme <-
 
 # data --------------------------------------------------------------------
 
+
 #--yields
 y <- read_csv("data_tidy/yields.csv") |>
-  filter(!is.na(yield_buac))
+  filter(!is.na(yield_buac)) %>%
+  mutate(
+    last_name = case_when(
+      last_name == "Veenstra_1" ~ "Veenstra1",
+      last_name == "Veenstra_2" ~ "Veenstra2",
+      TRUE ~ last_name))
 
 
 # N application rates -----------------------------------------------------
@@ -99,7 +105,7 @@ y %>%
   labs(x = "Cooperator",
        y = "Nitrogen\napplied\n(lb/ac)",
        fill = NULL,
-       title = "Typical N rate treatments ranged from 108-264 lb N/ac",
+       title = "Typical N rates ranged from 108-264 lb N/ac",
        subtitle = "On average, rates were reduced by 30% (20-74 lb N/ac lower than typical rate)") + 
   my_nitapp_theme 
 
