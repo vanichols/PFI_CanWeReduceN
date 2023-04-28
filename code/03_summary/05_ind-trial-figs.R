@@ -91,8 +91,8 @@ y <-
   #--get rid of bakehouse's NA rep
   filter(!is.na(yield_buac)) |> 
   mutate(trt = ifelse(trt == "typ", 
-                      paste0("Typical,\n", round(nrate_lbac, 0), " lb N/ac"),
-                      paste0("Reduced,\n", round(nrate_lbac, 0), " lb N/ac")),
+                      paste0("Typical"), #,\n", round(nrate_lbac, 0), " lb N/ac"),
+                      paste0("Reduced")),#\n", round(nrate_lbac, 0), " lb N/ac")),
          trt = as.factor(trt),
          trt = fct_rev(trt),
          sig = ifelse(pval < 0.05, 
@@ -110,10 +110,11 @@ YieldFig <- function(data = tst) {
   
   fig <- 
     tst |>
+    mutate(rep_lab = paste0("Rep ", rep)) %>% 
     ggplot(aes(trt, yield_buac)) +
     geom_col(aes(group = rep, fill = trt),
              color = "black",
-             position = position_dodge(),
+             position = position_dodge(width = .9),
              show.legend = F) +
     #--yields
     geom_text(aes(x = trt,
@@ -121,16 +122,12 @@ YieldFig <- function(data = tst) {
                   label = yld_lab),
               check_overlap = T,
               fontface = "italic") +
-    #--reps, typ
-    geom_text(x = 0.58, y = 2, label = "Rep 1", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 0.81, y = 2, label = "Rep 2", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 1.04, y = 2, label = "Rep 3", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 1.27, y = 2, label = "Rep 4", angle = 90, color = "gray", hjust = 0) +
-    #--reps, red
-    geom_text(x = 1.58, y = 2, label = "Rep 1", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 1.81, y = 2, label = "Rep 2", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 2.04, y = 2, label = "Rep 3", angle = 90, color = "gray", hjust = 0) +
-    geom_text(x = 2.27, y = 2, label = "Rep 4", angle = 90, color = "gray", hjust = 0) +
+    #-rep labels
+    geom_text(aes(x = trt, y = 5, label = rep_lab, group = rep),
+              position = position_dodge(width = .9), 
+              angle = 90,
+              hjust = 0, 
+              color = "gray") +
     #--diff
     geom_text(aes(x = 1.5,
                   y = 1.4 * yield_max,
@@ -139,10 +136,12 @@ YieldFig <- function(data = tst) {
               fontface = "bold") +
     scale_y_continuous(expand = expansion(0.1)) +
     scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) +
+    theme(axis.text.x = element_text(size = rel(1.2))) +
     labs(x = NULL,
          y = "bu per ac",
          title = "Corn yield response",
         caption = "*Significance at 95% confidence level\nNumbers may not match exactly due to rounding")
+  
   
   #--testing new rep label
   
@@ -227,6 +226,7 @@ NUEFig <- function(data = tst2) {
       aes(trt, nue_max * 1.05, label = paste0("Mean = ", estimate)),
       check_overlap = T
     ) +
+    theme(axis.text.x = element_text(size = rel(1.2))) +
     scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) +
     labs(x = NULL,
          y = "lb N per bushel",
@@ -243,6 +243,8 @@ fig2
 
 
 # money fig ---------------------------------------------------------------
+
+#--the text is getting cut off in most figs, need to move down or adjust exapansion
 
 tst3 <- 
   m |> 
@@ -338,6 +340,7 @@ MoneyFig <- function(data = tst3) {
     ) +
     scale_y_continuous(labels = label_dollar(), expand = expansion(add = 10)) +
     expand_limits(x = 4.5) +
+    theme(axis.text.x = element_text(size = rel(1.2))) +
     scale_color_manual(values = c(
       "good" = pfi_blue,
       "neutral" = pfi_tan,
@@ -363,13 +366,18 @@ fig3
 
 # combine -----------------------------------------------------------------
 
+fig1 + fig3 + plot_layout(widths = c(0.6, 0.4)) & 
+  plot_annotation(theme = theme_border,
+                  title = "test")
 
-fig1 + fig3 + fig2 + plot_layout(widths = c(0.7, 0.3, 0.3))
+# fig1 + fig3 + fig2 + plot_layout(widths = c(0.7, 0.3, 0.3)) & 
+#   theme(plot.title = element_text(size = rel(1.3)))
 
 ggsave("figs/ind-figs/test.png", width = 10, height = 6)
 
 
 # loop it -----------------------------------------------------------------
+i <- 2
 
 #--waldo needs done manually bc of reps
 
@@ -394,10 +402,26 @@ for (i in 1:length(my_names)){
   
   fig3 <- MoneyFig(data = tst3)
   
+  tst.nlo <- tst %>% filter(grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+    unique() %>% round()
   
-  fig1 + fig3 + fig2 + plot_layout(widths = c(0.7, 0.3, 0.3))
+  tst.nhi <- tst %>% filter(!grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+    unique() %>% round()
+  
+  tmp.plot.title = paste0("Impact of reducing N from ", 
+                          tst.nhi, 
+                          " lb/ac to ",
+                          tst.nlo, 
+                          " lb/ac in 2022")
+  
+  fig1 + fig3 + plot_layout(widths = c(0.5, 0.5)) & 
+    plot_annotation(theme = theme_border,
+                    title = tmp.plot.title) &
+    theme(plot.title = element_text(size = rel(1.3)))
+  
   ggsave(paste0("figs/ind-figs/", my_names[i], ".png"), 
-         height = 7.19, width = 11.5)
+         height = 4.5, width = 7)
   
   
 }
+
