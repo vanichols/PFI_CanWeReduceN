@@ -65,7 +65,7 @@ m_dst <-
   m_raw %>%
   select(trial_key, trial_label, everything()) %>% 
   pivot_longer(4:ncol(.))  %>% 
-  left_join(st_m %>% select(-estimate) %>% rename(name = var)) %>% 
+  left_join(m_st %>% select(-estimate) %>% rename(name = var)) %>% 
   group_by(trial_label) %>% 
   mutate(pval_max = max(pval),
          value_min = min(value, na.rm = T),
@@ -472,3 +472,258 @@ for (i in 1:length(my_names)){
   
 }
 
+
+# veenstra is special ---------------------------------------------
+
+v.yield <- 
+  y2 %>% 
+  filter(grepl("veen", trial_key))
+
+#--yield, faceted
+vfig1 <- 
+   v.yield %>% 
+  mutate(rep_lab = paste0("Rep ", rep)) %>% 
+  ggplot(aes(trt, yield_buac)) +
+  geom_col(aes(group = rep, fill = trt),
+           color = "black",
+           position = position_dodge(width = .9),
+           show.legend = F) +
+  #--yields
+  geom_text(aes(x = trt,
+                y = 1.15 * yield_max,
+                label = yld_lab),
+            check_overlap = T,
+            fontface = "italic", 
+            family = "Times New Roman",
+            color = "gray50") +
+  #-rep labels
+  geom_text(aes(x = trt, y = 5, label = rep_lab, group = rep),
+            position = position_dodge(width = .9), 
+            angle = 90,
+            hjust = 0, 
+            family = "Times New Roman",
+            color = "gray") +
+  #--diff
+  geom_text(aes(x = 1.5,
+                y = 1.4 * yield_max,
+                label = sig_lab),
+            check_overlap = T,
+            family = "Times New Roman",
+            color = "gray50") +
+  scale_y_continuous(expand = expansion(0.1)) +
+  scale_fill_manual(values = c(pfi_dkgreen, pfi_green)) +
+  facet_wrap(~trial_label, nrow = 2) +
+  my_combo_theme +
+  theme(axis.text.x = element_text(size = rel(1.1))) +
+  labs(x = NULL,
+       y = "Bushels per ac",
+       title = "Corn yield response",
+       caption = "*Significance at 95% confidence level\nNumbers may not match exactly due to rounding")
+
+v.money <- 
+  m %>%
+  filter(grepl("Veenstra", trial_label))
+
+#--money, faceted
+vfig2 <- 
+  v.money %>%   
+  mutate(
+    trial_label_facet = trial_label,
+    trial_label = ifelse(grepl("Veenstra", trial_label), "Veenstra", trial_label)) %>% 
+  ggplot() +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  #--range, white
+  geom_segment(
+    aes(
+      x = trial_label,
+      xend = trial_label,
+      y = value_min,
+      yend = value_max,
+    ),
+    color = "white",
+    linewidth = 8,
+    show.legend = F
+  )  +
+  #--range alpha
+  geom_segment(
+    aes(
+      x = trial_label,
+      xend = trial_label,
+      y = value_min,
+      yend = value_max,
+      color = clr
+    ),
+    alpha = 0.5,
+    linewidth = 8,
+    show.legend = F
+  )  +
+  #--top of range
+  geom_segment(
+    aes(
+      x = trial_label,
+      xend = trial_label,
+      y = value_max - 5,
+      yend = value_max,
+      color = clr
+    ),
+    linewidth = 8,
+    show.legend = F
+  ) +
+  #--bottom of range
+  geom_segment(
+    aes(
+      x = trial_label,
+      xend = trial_label,
+      y = value_min,
+      yend = value_min + 5,
+      color = clr
+    ),
+    linewidth = 8,
+    show.legend = F
+  ) +
+  #--midpoint
+  geom_point(
+    aes(x = trial_label,
+        y = midsav_dolac,
+        color = clr),
+    pch = 17,
+    show.legend = F,
+    size = 4
+  ) +
+  #--arrows
+  geom_segment(aes(
+    xend = 1,
+    x = 1.3,
+    yend = value_max + 1,
+    y = value_max + 12
+  ),
+  color= "gray50",
+  arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(
+    xend = 1,
+    x = 1.2,
+    yend = value_min - 1,
+    y = value_min - 15
+  ),
+  color= "gray50",
+  arrow = arrow(length = unit(0.2, "cm"))) +
+  geom_segment(aes(
+    xend = 1.05,
+    x = 1.35,
+    yend = midsav_dolac,
+    y = midsav_dolac + 2
+  ),
+  color= "gray50",
+  arrow = arrow(length = unit(0.2, "cm"))) +
+  #--text
+  geom_text(
+    aes(
+      x = 1.25,
+      y = value_max + 12,
+      label = paste0(
+        "Best-case, ",
+        value_max_lab,
+        "\n  (expensive N, low corn revenue)"
+      )
+    ),
+    check_overlap = T,
+    hjust = 0,
+    family = "Times New Roman",
+    fontface = "italic",
+    color = "gray50"
+  ) +
+  geom_text(
+    aes(
+      x = 1.4,
+      y = value_min - 15,
+      label = paste0(
+        "Worst-case, ",
+        value_min_lab,
+        "\n  (cheap N,  high corn revenue)"
+      )
+    ),
+    check_overlap = T,
+    hjust = 0,
+    family = "Times New Roman",
+    fontface = "italic",
+    color = "gray50"
+  ) +
+  geom_text(
+    aes(
+      x = 1.4,
+      y = midsav_dolac + 2,
+      label = paste0("Midpoint, ", midsav_dolac_lab)
+    ),
+    check_overlap = T,
+    hjust = 0,
+    family = "Times New Roman",
+    fontface = "italic",
+    color = "gray50"
+  ) +
+  scale_y_continuous(labels = label_dollar(), expand = expansion(mult = 0.2)) +
+  expand_limits(x = 3.5) +
+  my_combo_theme +
+  theme(axis.text.x = element_text(size = rel(1.1))) +
+  scale_color_manual(values = c(
+    "good" = pfi_blue,
+    "neutral" = pfi_tan,
+    "bad" = pfi_orange
+  )) +
+  facet_wrap(~trial_label_facet, nrow = 2, scales = "free") +
+  labs(
+    x = NULL,
+    y = "Dollars per acre",
+    title = str_wrap(
+      "Financial outcome**",
+      width = 40
+    ),
+    caption = "**N prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu"
+  )
+
+
+vfig_res <- 
+  vfig1 + vfig2 + plot_layout(widths = c(0.5, 0.5)) & 
+  plot_annotation(theme = theme_border) 
+
+
+#--weather
+v.name <- "Veenstra1"
+
+vfig3 <- 
+  TempFigInd(f.data = t, f.trial_label = v.name) +
+  labs(title = "Temperature")
+
+vfig4 <- 
+  CumPrecipFigInd(f.data = cp, f.trial_label = v.name) + 
+  labs(title = "Precipitation")
+
+vfig_wea <- 
+  vfig3 + vfig4
+
+#--overall plot title
+tst.nlo <- 
+  v.yield %>% filter(grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+  unique() %>% round()
+
+tst.nhi <- 
+  v.yield %>% filter(!grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+  unique() %>% round()
+
+tmp.loc <- t %>% filter(trial_label == v.name) %>% pull(city) %>% unique() %>% str_to_title()
+
+tmp.plot.title = paste0("Impact of reducing N from ", 
+                        tst.nhi, 
+                        " lb/ac to ",
+                        tst.nlo, 
+                        " lb/ac in ",
+                        tmp.loc, " IA, 2022")
+
+vfig_wea / vfig_res + 
+  plot_layout(heights = c(0.3, 0.7)) +
+  plot_annotation(theme = theme_border,
+                  title = tmp.plot.title) &
+  theme(plot.title = element_text(size = rel(1.4)),
+        text = element_text(family = "Times New Roman"))
+
+ggsave(paste0("figs/ind-figs/Veenstra.png"), 
+       height = 9, width = 8)

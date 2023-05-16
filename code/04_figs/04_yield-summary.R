@@ -111,8 +111,8 @@ d_money_fig <-
   #--create nice label
   mutate(midsav_dolac_lab = ifelse(midsav_dolac < 0, 
                                   paste0("-$", abs(round(midsav_dolac))),
-                                  paste0("$", round(midsav_dolac))),
-         midsav_dolac_lab = ifelse(clr == "neutral", " ", paste0(midsav_dolac_lab, "/ac")))
+                                  paste0("$", round(midsav_dolac))))#,
+         #midsav_dolac_lab = ifelse(clr == "neutral", " ", paste0(midsav_dolac_lab, "/ac")))
 
 
 #--combine money and yield info
@@ -127,14 +127,14 @@ d_fig <-
 # yield diffs, money-------------------------------------------------------------
 
 d_fig %>% 
-  filter(trial_label == "Bennett")
+  filter(trial_label == "Anderson"|trial_label == "Frederick")
 
 #--make them colored by financial losses
 
 d_fig |>
   left_join(d_diffs %>% select(trial_label, dif_nrate_lbac) %>% distinct()) %>% 
   #--make it so it is red-typ and nice labels
-  mutate(yld_dif_buac = yld_dif_buac,
+  mutate(yld_dif_buac = -yld_dif_buac,
          trial_label = paste0(trial_label, ", -", round(dif_nrate_lbac), " lb/ac")) %>% 
   #--fig
   ggplot(aes(reorder(trial_label, -yld_dif_buac), yld_dif_buac)) +
