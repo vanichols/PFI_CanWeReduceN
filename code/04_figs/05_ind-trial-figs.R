@@ -1,39 +1,72 @@
 #--make summary figure w/weather, money, yields
 #--note the fonts aren't working, cufrently times new roman
 
-
 library(tidyverse)
 library(scales)
 library(lubridate)
 library(patchwork)
 
 
-
-
 rm(list = ls())
 
 source("code/04_figs/00_weather-figs-fxns.R")
 source("code/04_figs/00_fig-colors.R")
-source("code/04_figs/00_fig-themes.R")
+
+
+# theme -------------------------------------------------------------------
+
+my_combo_theme <-
+  theme_bw() +
+  theme(
+    axis.title = element_text(size = rel(1.1)),
+    strip.text = element_text(size = rel(1.2)),
+    strip.background = element_rect(fill = pfi_tan),
+    #axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    plot.title = element_text(size = rel(1.1)),
+    panel.grid.minor = element_blank(),
+    # panel.grid.major.y = element_blank(),
+    plot.caption = element_text(hjust = 1),
+    #panel.border = element_blank(),
+    #plot.title.position = "plot",
+    plot.caption.position =  "plot",
+    text = element_text(family = "Times New Roman")
+  )
+
+#--for overal patchworked fig
+theme_border <- 
+  theme(
+    plot.background = element_rect(fill = NA, colour = 'black', linewidth = 3),
+    text = element_text(family = "Times New Roman"))
 
 # data --------------------------------------------------------------------
 
-d <- read_csv("data_tidy/yields.csv")
-s <- read_csv("data_tidy/stats.csv")
+tk <- 
+  read_csv("data_tidy/td_trialkey.csv") %>% 
+  select(trial_key, trial_label)
 
-d_stats <- 
-  read_csv("data_tidy/stats-savings.csv")
+y <- read_csv("data_tidy/td_cornyields.csv") %>% 
+  left_join(tk)
+
+y_st <- read_csv("data_stats/stat_cornyield.csv") %>% 
+  left_join(tk)
 
 #--money
 
-d_money_raw <- 
-  read_csv("data_tidy/money.csv") 
+m_st <- 
+  read_csv("data_stats/stat_money.csv") %>% 
+  left_join(tk)
 
-d_money <- 
-  d_money_raw %>%
-  pivot_longer(3:ncol(.))  %>% 
-  left_join(d_stats %>% select(-estimate) %>% rename(name = var)) %>% 
-  group_by(last_name) %>% 
+m_raw <- 
+  read_csv("data_tidy/td_money.csv") %>% 
+  left_join(tk)
+
+#--combine data and stats
+m_dst <- 
+  m_raw %>%
+  select(trial_key, trial_label, everything()) %>% 
+  pivot_longer(4:ncol(.))  %>% 
+  left_join(st_m %>% select(-estimate) %>% rename(name = var)) %>% 
+  group_by(trial_label) %>% 
   mutate(pval_max = max(pval),
          value_min = min(value, na.rm = T),
          value_max = max(value, na.rm = T)) %>%
@@ -45,14 +78,15 @@ d_money <-
            (value_max > 0 & value_min > 0) ~ "good"
          ))
 
+#--no idea
 m <-
-  d_money %>%
-  select(last_name, value_min, value_max, fin_sig, clr) %>% 
+  m_dst %>%
+  select(trial_label, value_min, value_max, fin_sig, clr) %>% 
   left_join(
-    d_stats %>% 
-      filter(var == "avg_savings") %>% 
-      select(last_name, estimate) %>% 
-      rename(avg_savings = estimate)
+    m_st %>% 
+      filter(var == "midsav_dolac") %>% 
+      select(trial_label, estimate) %>% 
+      rename(midsav_dolac = estimate)
   ) %>% 
   distinct() %>% 
   mutate(
@@ -62,47 +96,43 @@ m <-
     value_min_lab = ifelse(value_min < 0, 
                                paste0("-$", abs(round(value_min, 0)), "/ac"), 
                                paste0("+$", abs(round(value_min, 0)), "/ac")),
-    avg_savings_lab = ifelse(avg_savings < 0, 
-                             paste0("-$", abs(round(avg_savings, 0)), "/ac"), 
-                             paste0("+$", abs(round(avg_savings, 0)), "/ac"))
+    midsav_dolac_lab = ifelse(midsav_dolac < 0, 
+                             paste0("-$", abs(round(midsav_dolac, 0)), "/ac"), 
+                             paste0("+$", abs(round(midsav_dolac, 0)), "/ac"))
   ) 
 
 
 my_names <- 
-  d |> 
-  pull(last_name) |> 
+  m |> 
+  pull(trial_label) |> 
   unique()
 
 
 #---weather data
-ln_key <- 
-  read_csv("data_raw/byhand_cooperator-metadata.csv", skip = 5) |> 
-  select(last_name, city) %>% 
-  distinct()
+
+tkcity <- 
+  read_csv("data_tidy/td_trialkey.csv") %>% 
+  select(trial_key, trial_label, city)
+
+w <- 
+  read_csv("data_tidy/td_wea.csv") %>% 
+  full_join(tkcity, by = "city")
 
 t <- 
-  read_csv("data_wea/temperature-F.csv") |> 
-  arrange(city) %>% 
-  full_join(ln_key, by = "city")
+  w %>% 
+  filter(grepl("temperature", wea_type))
 
-ct <- read_csv("data_wea/cum-temperature-F.csv") |> 
-  full_join(ln_key)
+cp <- 
+  w %>% 
+  filter(grepl("precip", wea_type))
 
-p <- read_csv("data_wea/precip-in.csv") |> 
-  full_join(ln_key)
-
-cp <- read_csv("data_wea/cum-precip-in.csv") |> 
-  full_join(ln_key)
-
-
-# yield by rep fig --------------------------------------------------------
 
 #--need estimated reduction
-y <-
-  d |>  
-  left_join(s) |> 
+y2 <-
+  y |>  
+  left_join(y_st) |> 
   #--get rid of bakehouse's NA rep
-  filter(!is.na(yield_buac)) |> 
+  filter(!is.na(yield_buac)) %>%  
   mutate(trt = ifelse(trt == "typ", 
                       paste0("Typical"), #,\n", round(nrate_lbac, 0), " lb N/ac"),
                       paste0("Reduced")),#\n", round(nrate_lbac, 0), " lb N/ac")),
@@ -113,13 +143,17 @@ y <-
          dir = ifelse(diff_est < 0, "increase", "reduction"),
          sig_lab = paste(sig, dir, "of", abs(round(diff_est, 0)), "bu/ac*"),
          yld_lab = paste(round(estimate, 0), "bu/ac")) |> 
-  group_by(last_name) |> 
+  group_by(trial_label) |> 
   mutate(yield_max = max(yield_buac, na.rm = T)) 
 
 
-#--test
 
-YieldFig <- function(y.data = y) {
+# functions ---------------------------------------------------------------
+
+#--test
+y.tst <- y2 %>% filter(trial_key == "amun_22")
+
+YieldFig <- function(y.data = y.tst) {
   
   fig <- 
     y.data |>
@@ -165,18 +199,15 @@ YieldFig <- function(y.data = y) {
 }
 
 # tst <- y |>
-#    filter(last_name == my_names[7])
+#    filter(trial_label == my_names[7])
 # 
 # fig1 <- YieldFig(y.data = tst)
 # 
 # fig1
 
+m.tst <- m %>% filter(trial_label == "Bakehouse")
 
-# money fig ---------------------------------------------------------------
-
-#--the text is getting cut off in most figs, need to move down or adjust exapansion
-
-MoneyFig <- function(m.data = tst3) {
+MoneyFig <- function(m.data = m.tst) {
   
   m.data %>%
     ggplot() +
@@ -184,8 +215,8 @@ MoneyFig <- function(m.data = tst3) {
     #--range, white
     geom_segment(
       aes(
-        x = last_name,
-        xend = last_name,
+        x = trial_label,
+        xend = trial_label,
         y = value_min,
         yend = value_max,
       ),
@@ -196,8 +227,8 @@ MoneyFig <- function(m.data = tst3) {
     #--range alpha
     geom_segment(
       aes(
-        x = last_name,
-        xend = last_name,
+        x = trial_label,
+        xend = trial_label,
         y = value_min,
         yend = value_max,
         color = clr
@@ -209,8 +240,8 @@ MoneyFig <- function(m.data = tst3) {
     #--top of range
     geom_segment(
       aes(
-        x = last_name,
-        xend = last_name,
+        x = trial_label,
+        xend = trial_label,
         y = value_max - 5,
         yend = value_max,
         color = clr
@@ -221,8 +252,8 @@ MoneyFig <- function(m.data = tst3) {
     #--bottom of range
     geom_segment(
       aes(
-        x = last_name,
-        xend = last_name,
+        x = trial_label,
+        xend = trial_label,
         y = value_min,
         yend = value_min + 5,
         color = clr
@@ -232,8 +263,8 @@ MoneyFig <- function(m.data = tst3) {
     ) +
   #--midpoint
     geom_point(
-      aes(x = last_name,
-          y = avg_savings,
+      aes(x = trial_label,
+          y = midsav_dolac,
           color = clr),
       pch = 17,
       show.legend = F,
@@ -259,8 +290,8 @@ MoneyFig <- function(m.data = tst3) {
     geom_segment(aes(
       xend = 1.05,
       x = 1.35,
-      yend = avg_savings,
-      y = avg_savings + 2
+      yend = midsav_dolac,
+      y = midsav_dolac + 2
     ),
     color= "gray50",
     arrow = arrow(length = unit(0.2, "cm"))) +
@@ -300,8 +331,8 @@ MoneyFig <- function(m.data = tst3) {
     geom_text(
       aes(
         x = 1.4,
-        y = avg_savings + 2,
-        label = paste0("Midpoint, ", avg_savings_lab)
+        y = midsav_dolac + 2,
+        label = paste0("Midpoint, ", midsav_dolac_lab)
       ),
       check_overlap = T,
       hjust = 0,
@@ -332,14 +363,6 @@ MoneyFig <- function(m.data = tst3) {
   
 }
 
-# tst3 <-
-#   m |>
-#   filter(last_name == my_names[7])
-# 
-# fig3 <- MoneyFig(m.data = tst3)
-# 
-# fig3
-
 # combine results -----------------------------------------------------------------
 
 
@@ -356,22 +379,22 @@ MoneyFig <- function(m.data = tst3) {
 
 
 
-# weather? ----------------------------------------------------------------
+# test - wea----------------------------------------------------------------
 
-# wfig1 <- 
-#   TempFigInd(f.data = t, f.last_name = "anderson") +
+# wfig1 <-
+#   TempFigInd(f.data = t, f.trial_label = "Veenstra1") +
 #   labs(title = "Temperature")
 # 
-# wfig2 <- 
-#   CumPrecipFigInd(f.data = cp, f.last_name = "anderson") + 
+# wfig2 <-
+#   CumPrecipFigInd(f.data = cp, f.trial_label = "Veenstra2") +
 #   labs(title = "Precipitation")
 # 
-# fig_wea <- 
-#   wfig1 + wfig2  
+# fig_wea <-
+#   wfig1 + wfig2
 
 
 
-# patchwork a patchwork? --------------------------------------------------
+# test - patchwork a patchwork --------------------------------------------------
 
 # fig_wea / fig_res & 
 #   plot_annotation(theme = theme_border,
@@ -387,15 +410,15 @@ for (i in 1:length(my_names)){
   
   #--yield/money
   tmp.ydat <- 
-    y |> 
-    filter(last_name == my_names[i]) 
+    y2 |> 
+    filter(trial_label == my_names[i]) 
   
   fig1 <- YieldFig(y.data = tmp.ydat)
   
  
   tmp.mdat <- 
     m %>% 
-    filter(last_name == my_names[i])
+    filter(trial_label == my_names[i])
   
   fig3 <- MoneyFig(m.data = tmp.mdat)
   
@@ -406,27 +429,29 @@ for (i in 1:length(my_names)){
   
   
   #--weather
-  tmp.name <- my_names[i] %>% str_to_lower()
+  tmp.name <- my_names[i]
 
-    wfig1 <- 
-    TempFigInd(f.data = t, f.last_name = tmp.name) +
+  wfig1 <- 
+    TempFigInd(f.data = t, f.trial_label = tmp.name) +
     labs(title = "Temperature")
   
   wfig2 <- 
-    CumPrecipFigInd(f.data = cp, f.last_name = tmp.name) + 
+    CumPrecipFigInd(f.data = cp, f.trial_label = tmp.name) + 
     labs(title = "Precipitation")
   
   fig_wea <- 
     wfig1 + wfig2  
   
   #--overall plot title
-  tst.nlo <- tmp.ydat %>% filter(grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+  tst.nlo <- 
+    tmp.ydat %>% filter(grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
     unique() %>% round()
   
-  tst.nhi <- tmp.ydat %>% filter(!grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
+  tst.nhi <- 
+    tmp.ydat %>% filter(!grepl("Reduced", trt)) %>% pull(nrate_lbac) %>% 
     unique() %>% round()
   
-  tmp.loc <- t %>% filter(last_name == tmp.name) %>% pull(city) %>% unique() %>% str_to_title()
+  tmp.loc <- t %>% filter(trial_label == tmp.name) %>% pull(city) %>% unique() %>% str_to_title()
   
   tmp.plot.title = paste0("Impact of reducing N from ", 
                           tst.nhi, 

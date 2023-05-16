@@ -10,29 +10,33 @@ library(patchwork)
 rm(list = ls())
 source("code/04_figs/00_weather-figs-fxns.R")
 source("code/04_figs/00_fig-colors.R")
-source("code/04_figs/00_fig-themes.R")
+
+
+# border for patchwork plot -----------------------------------------------
+
+theme_border <- 
+  theme(
+    plot.background = element_rect(fill = NA, colour = 'black', linewidth = 3),
+    text = element_text(family = "Times New Roman"))
 
 # data --------------------------------------------------------------------
 
-ln_key <- 
-  read_csv("data_raw/byhand_cooperator-metadata.csv", skip = 5) |> 
-  select(last_name, city) %>% 
-  distinct()
+tk <- 
+  read_csv("data_tidy/td_trialkey.csv") %>% 
+  select(trial_key, trial_label, city)
+
+w <- 
+  read_csv("data_tidy/td_wea.csv") %>% 
+  arrange(city) %>% 
+  full_join(tk, by = "city")
 
 t <- 
-  read_csv("data_wea/temperature-F.csv") |> 
-  arrange(city) %>% 
-  full_join(ln_key, by = "city")
+  w %>% 
+  filter(grepl("temperature", wea_type))
 
-ct <- read_csv("data_wea/cum-temperature-F.csv") |> 
-  full_join(ln_key)
-
-p <- read_csv("data_wea/precip-in.csv") |> 
-  full_join(ln_key)
-
-cp <- read_csv("data_wea/cum-precip-in.csv") |> 
-  full_join(ln_key)
-
+cp <- 
+  w %>% 
+  filter(grepl("precip", wea_type))
 
 
 # figs --------------------------------------------------------------------
@@ -42,6 +46,7 @@ fig_cp <-
 
 fig_cp
 
+#--add an arrow to temperature plot
 fig_t <- 
   TempFigSummary(f.data = t) + 
     geom_text(aes(x = as.Date("2022-06-28"), y = -2.5, label = "Cool Aprils"),

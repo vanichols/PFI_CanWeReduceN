@@ -31,52 +31,61 @@ my_yield_theme <-
 
 # data --------------------------------------------------------------------
 
-#--yields
-y <- read_csv("data_tidy/yields.csv") |>
-  filter(!is.na(yield_buac))
+tk <- 
+  read_csv("data_tidy/td_trialkey.csv") %>% 
+  select(trial_key, trial_label)
 
-#--nrate and yield diffs by rep
-d_diffs <- read_csv("data_tidy/trt-diffs.csv")
+#--yields-----------------
 
-#--stats
-s_raw <- read_csv("data_tidy/stats.csv")
+#--raw yields
+y <- 
+  read_csv("data_tidy/td_cornyields.csv") %>% 
+  filter(!is.na(yield_buac)) %>% 
+  left_join(tk)
 
-s_buac <- 
-  s_raw |> 
-  select(trt, estimate, last_name, diff_est, pval) |> 
-  rename(yld_pval = pval,
-         yld_mn = estimate,
-         yld_dif_buac = diff_est)
+# #--nrate and yield diffs by rep
+d_diffs <- 
+  read_csv("data_tidy/td_trtdiffs.csv") %>% 
+  left_join(tk)
 
-s_pct <- 
-  s_buac |> 
-  filter(trt == "typ") %>% 
-  mutate(yld_dif_pct = yld_dif_buac/yld_mn * 100) %>% 
-  select(-trt, -yld_mn)
-  
-s <- 
-  s_buac %>% 
-  left_join(s_pct)
+#--raw stats on yields
+st_buac <- 
+  read_csv("data_stats/stat_cornyield.csv") %>% 
+  left_join(tk) 
 
-d_raw <- 
-  y |> 
-  left_join(s) |> 
-  select(-rep, -yield_buac) |> 
-  distinct()
+#--rename to make joins easier
+st_yld <- 
+   st_buac %>% 
+   select(trt, estimate, trial_label, diff_est, pval) |>
+   rename(yld_pval = pval,
+          yld_mn = estimate,
+          yld_dif_buac = diff_est) 
+   
+#--yields and stats
+y_dst <- 
+   y |> 
+   left_join(st_yld) |> 
+   select(-rep, -yield_buac) |> 
+   distinct()
 
+#--money data------------------
 
-#--money data
-d_stats <- 
-  read_csv("data_tidy/stats-savings.csv")
+#--estimate and pval for each trial/scenario
+st_money <- 
+  read_csv("data_stats/stat_money.csv") %>% 
+  left_join(tk)
 
 d_money_raw <- 
-  read_csv("data_tidy/money.csv") 
+  read_csv("data_tidy/td_money.csv") %>% 
+  left_join(tk) %>% 
+  select(trial_key, trial_label, everything())
 
-d_money <- 
+#--money data and stats
+m_dst <- 
   d_money_raw %>%
-  pivot_longer(3:ncol(.))  %>% 
-  left_join(d_stats %>% select(-estimate) %>% rename(name = var)) %>% 
-  group_by(last_name) %>% 
+  pivot_longer(4:ncol(.))  %>% 
+  left_join(st_money %>% select(-estimate) %>% rename(name = var)) %>% 
+  group_by(trial_label) %>% 
   mutate(pval_max = max(pval),
          value_min = min(value, na.rm = T),
          value_max = max(value, na.rm = T)) %>%
@@ -89,59 +98,59 @@ d_money <-
          ))
 
 d_money_fig <-
-  d_money %>%
-  select(last_name, value_min, value_max, fin_sig, clr) %>% 
+  m_dst %>%
+  select(trial_label, value_min, value_max, fin_sig, clr) %>% 
   left_join(
-    d_stats %>% 
-      filter(var == "avg_savings") %>% 
-      select(last_name, estimate) %>% 
-      rename(avg_savings = estimate)
+    st_money %>% 
+      filter(var == "midsav_dolac") %>% 
+      select(trial_label, estimate) %>% 
+      rename(midsav_dolac = estimate)
   ) %>% 
   distinct() %>% 
-  select(last_name, clr, avg_savings) %>% 
-  mutate(avg_savings_lab = ifelse(avg_savings < 0, 
-                                  paste0("-$", abs(round(avg_savings))),
-                                  paste0("$", round(avg_savings))),
-         avg_savings_lab = ifelse(clr == "neutral", " ", paste0(avg_savings_lab, "/ac")))
+  select(trial_label, clr, midsav_dolac) %>% 
+  #--create nice label
+  mutate(midsav_dolac_lab = ifelse(midsav_dolac < 0, 
+                                  paste0("-$", abs(round(midsav_dolac))),
+                                  paste0("$", round(midsav_dolac))),
+         midsav_dolac_lab = ifelse(clr == "neutral", " ", paste0(midsav_dolac_lab, "/ac")))
 
-d_new <- 
-  d_raw |> 
+
+#--combine money and yield info
+d_fig <- 
+  y_dst |> 
   mutate(yld_sig = ifelse(yld_pval < 0.05, "*", " ")) %>% 
-  select(last_name, yld_dif_buac, yld_sig) |> 
+  select(trial_label, yld_dif_buac, yld_sig) |> 
   distinct() |> 
   left_join(d_money_fig)
 
 
 # yield diffs, money-------------------------------------------------------------
 
-d_new %>% 
-  filter(last_name == "Bennett")
+d_fig %>% 
+  filter(trial_label == "Bennett")
 
 #--make them colored by financial losses
 
-d_new |>
-  left_join(d_diffs %>% select(last_name, dif_nrate_lbac) %>% distinct()) %>% 
-  #--make it so it is red-typ
-  mutate(yld_dif_buac = -yld_dif_buac, 
-         last_name = case_when(
-           last_name == "Veenstra_1" ~ "Veenstra1",
-           last_name == "Veenstra_2" ~ "Veenstra2",
-           TRUE ~ last_name),
-         last_name = paste0(last_name, ", -", round(dif_nrate_lbac), " lb/ac")) %>% 
-  ggplot(aes(reorder(last_name, -yld_dif_buac), yld_dif_buac)) +
+d_fig |>
+  left_join(d_diffs %>% select(trial_label, dif_nrate_lbac) %>% distinct()) %>% 
+  #--make it so it is red-typ and nice labels
+  mutate(yld_dif_buac = yld_dif_buac,
+         trial_label = paste0(trial_label, ", -", round(dif_nrate_lbac), " lb/ac")) %>% 
+  #--fig
+  ggplot(aes(reorder(trial_label, -yld_dif_buac), yld_dif_buac)) +
   geom_col(aes(fill = clr),
            color = "black",
            show.legend = F) +
-  geom_text(aes(reorder(last_name, -yld_dif_buac), 
+  geom_text(aes(reorder(trial_label, -yld_dif_buac), 
                 yld_dif_buac - 2, 
                 label = yld_sig,
                 hjust = 0,
                 vjust = 0.75)) +
   #--savings values
-  geom_text(aes(reorder(last_name, -yld_dif_buac), 
+  geom_text(aes(reorder(trial_label, -yld_dif_buac), 
                 y = 28, 
                 hjust = 1,
-                label = avg_savings_lab,
+                label = midsav_dolac_lab,
                 color = clr),
             angle = 0,
             show.legend = F,
@@ -163,5 +172,5 @@ d_new |>
        subtitle = "Financial outcome from reduced N rate assuming midpoint price scenario as reference on right",
        caption = "* = Significant change in yield at 95% confidence level")
 
-ggsave("figs/yield-diff.png", width = 7, height = 5)
+ggsave("figs/yields.png", width = 7, height = 5)
 

@@ -24,43 +24,21 @@ my_wea_theme.fxn <-
           text = element_text(family = "Times New Roman")) 
   
 
-# data, just for testing functions --------------------------------------------------------------------
-# 
-# ln_key <- 
-#   read_csv("data_raw/byhand_cooperator-locations.csv", skip = 5) |> 
-#   select(last_name, city)
-# 
-# t <- 
-#   read_csv("data_wea/temperature-F.csv") |> 
-#   arrange(city) %>% 
-#   full_join(ln_key, by = "city")
-# 
-# ct <- read_csv("data_wea/cum-temperature-F.csv") |> 
-#   full_join(ln_key)
-# 
-# p <- read_csv("data_wea/precip-in.csv") |> 
-#   full_join(ln_key)
-# 
-# cp <- read_csv("data_wea/cum-precip-in.csv") |> 
-#   full_join(ln_key)
-
-
-
 # individual plots --------------------------------------------------------
 
 #--deviation from long term average, temp
 
-TempFigInd <- function(f.data = t, f.last_name = "fredericks") {
+TempFigInd <- function(f.data = t, f.trial_label = "Fredericks") {
   
   tmp.data <- 
     f.data |>
-    group_by(last_name, city, mm, name) |> 
+    group_by(trial_label, city, mm, name) |> 
     summarise(value = mean(value, na.rm = T)) |> 
     pivot_wider(names_from = name, values_from = value) |> 
     mutate(dev_t = t_22 - t_lt,
            date = paste("2022", mm, "01", sep = "/"),
            date_mm = as_date(date),
-           f_order = ifelse(last_name == f.last_name, 2, 1)) |> 
+           f_order = ifelse(trial_label == f.trial_label, 2, 1)) |> 
     arrange(f_order) |> 
     mutate(f_order = as_factor(f_order),
            f_order = fct_rev(f_order))
@@ -68,12 +46,12 @@ TempFigInd <- function(f.data = t, f.last_name = "fredericks") {
   ggplot() + 
     geom_hline(yintercept = 0) +
     geom_line(data = tmp.data, 
-              aes(date_mm, dev_t, group = last_name),
+              aes(date_mm, dev_t, group = trial_label),
               color = pfi_tan,
               linewidth = 1,
               show.legend = F) + 
-    geom_line(data = tmp.data %>% filter(last_name == f.last_name),
-              aes(date_mm, dev_t, group = last_name),
+    geom_line(data = tmp.data %>% filter(trial_label == f.trial_label),
+              aes(date_mm, dev_t, group = trial_label),
               color = pfi_red, 
               linewidth = 3,
               show.legend = F) + 
@@ -104,7 +82,7 @@ TempFigInd <- function(f.data = t, f.last_name = "fredericks") {
 }  
 
 
-CumPrecipFigInd <- function(f.data = cp, f.last_name = "fredericks") {
+CumPrecipFigInd <- function(f.data = cp, f.trial_label = "Fredericks") {
   
   tmp.data <- 
     f.data |>
@@ -116,12 +94,12 @@ CumPrecipFigInd <- function(f.data = cp, f.last_name = "fredericks") {
   ggplot() + 
     geom_hline(yintercept = 0) +
     geom_line(data = tmp.data, 
-              aes(dd_date, dev_cp, group = last_name),
+              aes(dd_date, dev_cp, group = trial_label),
               color = pfi_tan,
               linewidth = 1,
               show.legend = F) + 
-    geom_line(data = tmp.data %>% filter(last_name == f.last_name),
-              aes(dd_date, dev_cp, group = last_name),
+    geom_line(data = tmp.data %>% filter(trial_label == f.trial_label),
+              aes(dd_date, dev_cp, group = trial_label),
               color = pfi_blue, 
               linewidth = 3,
               show.legend = F) + 
@@ -159,7 +137,7 @@ TempFigSummary <- function(f.data = t) {
   
   tmp.data <- 
     f.data |>
-    group_by(last_name, city, mm, name) |> 
+    group_by(trial_label, city, mm, name) |> 
     summarise(value = mean(value, na.rm = T)) |> 
     pivot_wider(names_from = name, values_from = value) |> 
     mutate(dev_t = t_22 - t_lt,
@@ -169,7 +147,7 @@ TempFigSummary <- function(f.data = t) {
   ggplot() + 
     geom_hline(yintercept = 0) +
     geom_line(data = tmp.data, 
-              aes(date_mm, dev_t, group = last_name),
+              aes(date_mm, dev_t, group = trial_label),
               color = pfi_red,
               linewidth = 1,
               show.legend = F) + 
@@ -212,7 +190,7 @@ CumPrecipFigSummary <- function(f.data = cp) {
   ggplot() + 
     geom_hline(yintercept = 0) +
     geom_line(data = tmp.data, 
-              aes(dd_date, dev_cp, group = last_name),
+              aes(dd_date, dev_cp, group = trial_label),
               color = pfi_blue,
               linewidth = 1,
               show.legend = F) + 

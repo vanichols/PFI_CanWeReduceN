@@ -1,3 +1,5 @@
+#--note font is times new roman in theme and geom_text
+
 library(tidyverse)
 library(scales)
 library(lubridate)
@@ -34,53 +36,52 @@ my_nitapp_theme <-
 
 # data --------------------------------------------------------------------
 
+#--tk
+tk <- 
+  read_csv("data_tidy/td_trialkey.csv") %>% 
+  select(trial_key, trial_label, trial_label)
 
-#--yields
-y <- read_csv("data_tidy/yields.csv") |>
+#--yields/nrates
+y <- 
+  read_csv("data_tidy/td_cornyields.csv") %>% 
   filter(!is.na(yield_buac)) %>%
-  mutate(
-    last_name = case_when(
-      last_name == "Veenstra_1" ~ "Veenstra1",
-      last_name == "Veenstra_2" ~ "Veenstra2",
-      TRUE ~ last_name))
-
+  left_join(tk)
 
 # N application rates -----------------------------------------------------
 
 #--how much did they reduce it?
-n_pct <-
+d_nredp <-
   y |> 
   select(-yield_buac, -rep)  |> 
   distinct() |> 
   pivot_wider(names_from = trt, values_from = nrate_lbac) |> 
   mutate(red_pct = (typ - red)/typ * 100)
 
-summary(n_pct$red_pct)
-
-
+summary(d_nredp$red_pct)
 
 #--get order I want them in
 my_order <- 
   y %>% 
-  select(last_name, trt, nrate_lbac) %>% 
+  select(trial_label, trt, nrate_lbac) %>% 
   distinct() %>% 
   filter(trt == "typ") %>% 
   arrange(trt, nrate_lbac) %>% 
-  pull(last_name)
+  pull(trial_label)
 
 #--find half of difference to place percent labels
 pct_lab <- 
   y %>% 
-  select(last_name, trt, nrate_lbac) %>% 
+  select(trial_label, trt, nrate_lbac) %>% 
   distinct() %>% 
   pivot_wider(names_from = trt, values_from = nrate_lbac) %>% 
   mutate(xdif = typ - red,
          halfxdif = xdif/2,
          pct_lab_y = red + halfxdif) %>% 
-  select(last_name, pct_lab_y)
+  select(trial_label, pct_lab_y)
 
-y %>% 
-  select(last_name, trt, nrate_lbac) %>% 
+fig_dat <- 
+  y %>% 
+  select(trial_label, trt, nrate_lbac) %>% 
   distinct() %>% 
   pivot_wider(names_from = trt, values_from = nrate_lbac) %>% 
   mutate(xdif = typ - red) %>% 
@@ -89,14 +90,20 @@ y %>%
   pivot_longer(red:xdif) %>% 
   rename(trt = name, nrate_lbac = value) %>% 
   mutate(trt = ifelse(trt == "xdif", "Typical N rate", "Reduced N rate")) %>% 
-  left_join(n_pct %>% select(-red)) %>% 
+  left_join(d_nredp %>% select(-red)) %>% 
   left_join(pct_lab) %>% 
   mutate(trt_fct = factor(trt, levels = c("Typical N rate", "Reduced N rate")),
-         last_name = factor(last_name, levels = my_order)) %>% 
-  #--fig
-  ggplot(aes(last_name, nrate_lbac)) +
+         trial_label = factor(trial_label, levels = my_order))
+
+
+
+
+# fig ---------------------------------------------------------------------
+
+fig_dat %>% 
+  ggplot(aes(trial_label, nrate_lbac)) +
   geom_col(aes(fill = trt_fct), color = "black") +
-  geom_text(aes(x = last_name, y = pct_lab_y,
+  geom_text(aes(x = trial_label, y = pct_lab_y,
                 label = paste0(round(red_pct, 0), "%")),
             fontface = "italic",
             color = "white") +
