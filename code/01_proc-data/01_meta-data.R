@@ -34,14 +34,14 @@ fz <-
   read_excel("data_raw/byhand_cooperator-field-size.xlsx", skip = 5) %>% 
   mutate(trial_label = ifelse(grepl("veenstra", last_name), "veenstra", last_name)) 
 
-#--average length of field? 1480
+#--average length of field? 1437
 
 m_length <- 
   fz %>% 
   summarise(length_ft = mean(length_ft, na.rm = T)) %>% 
   pull(length_ft)
 
-#--average width?
+#--average width? 30
 
 m_width <- 
   fz %>% 
@@ -63,7 +63,7 @@ fz_new <-
          length_ft = ifelse(is.na(length_ft), m_length, length_ft),
          ft2 = width_ft * length_ft,
          acres = ft2 * 2.29568e-5) %>% 
-  bind_rows(d_acres) %>% 
+  bind_rows(fz_acres) %>% 
   select(last_name = trial_label, strip_size_acres = acres) 
 
 fz_new %>% 
