@@ -1,5 +1,6 @@
 #--make summary figure w/weather, money, yields
 #--note the fonts aren't working, cufrently times new roman
+#--waldo's money outcomes are impacted by rep 1, make an alternative
 
 library(tidyverse)
 library(scales)
@@ -42,7 +43,8 @@ theme_border <-
 
 tk <- 
   read_csv("data_tidy/td_trialkey.csv") %>% 
-  select(trial_key, trial_label)
+  select(trial_key, trial_label) %>% 
+  add_row(trial_key = "waldnorep1_22", trial_label = "Waldo")
 
 y <- read_csv("data_tidy/td_cornyields.csv") %>% 
   left_join(tk)
@@ -56,8 +58,19 @@ m_st <-
   read_csv("data_stats/stat_money.csv") %>% 
   left_join(tk)
 
+m_raw0 <- 
+  read_csv("data_tidy/td_money.csv") 
+
+#--add fake waldorep1
+m_add <- 
+  m_raw0 %>% 
+  filter(grepl("wald", trial_key),
+         rep != 1) %>% 
+  mutate(trial_key = "waldnorep1_22")
+
 m_raw <- 
-  read_csv("data_tidy/td_money.csv") %>% 
+  m_raw0 %>%
+  bind_rows(m_add) %>% 
   left_join(tk)
 
 #--combine data and stats
@@ -66,7 +79,7 @@ m_dst <-
   select(trial_key, trial_label, everything()) %>% 
   pivot_longer(4:ncol(.))  %>% 
   left_join(m_st %>% select(-estimate) %>% rename(name = var)) %>% 
-  group_by(trial_label) %>% 
+  group_by(trial_key) %>% 
   mutate(pval_max = max(pval),
          value_min = min(value, na.rm = T),
          value_max = max(value, na.rm = T)) %>%
@@ -76,16 +89,20 @@ m_dst <-
            (value_max < 0 & value_min < 0) ~ "bad",
            (value_max > 0 & value_min < 0) ~ "neutral",
            (value_max > 0 & value_min > 0) ~ "good"
-         ))
+         ),
+         clr = ifelse(trial_key == "waldnorep1_22", 
+                      "good", #--this one is weird)
+                      clr)
+  )
 
 #--no idea
 m <-
   m_dst %>%
-  select(trial_label, value_min, value_max, fin_sig, clr) %>% 
+  select(trial_key, trial_label, value_min, value_max, fin_sig, clr) %>% 
   left_join(
     m_st %>% 
       filter(var == "midsav_dolac") %>% 
-      select(trial_label, estimate) %>% 
+      select(trial_key, trial_label, estimate) %>% 
       rename(midsav_dolac = estimate)
   ) %>% 
   distinct() %>% 
@@ -108,7 +125,8 @@ my_names_raw <-
   unique()
 
 #--veenstra will be special, leave just as a placeholder
-my_names <- my_names_raw[-16]
+#--waldo is done separately, remove
+my_names <- my_names_raw[-16][-16]
 
 
 #---weather data
@@ -131,6 +149,8 @@ cp <-
 
 
 #--need estimated reduction
+#--make it say 'No statistical difference in yields'
+#--get rid of 'rounding' and add Least Signifant Difference (LSD)
 y2 <-
   y |>  
   left_join(y_st) |> 
@@ -142,7 +162,7 @@ y2 <-
          trt = as.factor(trt),
          trt = fct_rev(trt),
          sig = ifelse(pval < 0.05, 
-                      "Significant", "Insignificant"),
+                      "Significant", "StatisticalXXX"),
          dir = ifelse(diff_est < 0, "increase", "reduction"),
          sig_lab = paste(sig, dir, "of", abs(round(diff_est, 0)), "bu/ac*"),
          yld_lab = paste(round(estimate, 0), "bu/ac")) |> 
@@ -195,7 +215,7 @@ YieldFig <- function(y.data = y.tst) {
     labs(x = NULL,
          y = "Bushels per ac",
          title = "Corn yield response",
-        caption = "*Significance at 95% confidence level\nNumbers may not match exactly due to rounding")
+        caption = "Assessed at 95% confidence level\nNumbers may not match exactly due to rounding")
   
   return(fig)
   
@@ -359,7 +379,7 @@ MoneyFig <- function(m.data = m.tst) {
         "Financial outcome**",
         width = 40
       ),
-      caption = "**N prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu"
+      caption = "N prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu"
     )
   
   
@@ -406,6 +426,71 @@ MoneyFig <- function(m.data = m.tst) {
 #         text = element_text(family = "Times New Roman"))
 
 
+# waldo special ------------------------------------------------
+
+#--money
+m.wald <- 
+  m %>% 
+  filter(trial_label == "Waldo") %>% 
+  mutate(trial_label = ifelse(trial_key == "wald_22", "Waldo", "Waldo, no Rep 1"))
+
+wfig_m <- 
+  MoneyFig(m.data = m.wald) + 
+  facet_grid(~trial_label, scales = "free")
+
+#--yield
+y.wald <- y2 %>% filter(trial_key == "wald_22")
+wfig_y <- YieldFig(y.wald)
+
+wfig_res <-
+  wfig_y + wfig_m +
+  plot_layout(widths = c(0.3, 0.7)) &
+  plot_annotation(theme = theme_border,
+                  title = "Test") &
+  theme(plot.title = element_text(size = rel(1.3)))
+
+#--weather
+wfig1 <-
+  TempFigInd(f.data = t, f.trial_label = "Waldo") +
+  labs(title = "Temperature")
+
+wfig2 <-
+  CumPrecipFigInd(f.data = cp, f.trial_label = "Waldo") +
+  labs(title = "Precipitation")
+
+wfig_wea <-
+  wfig1 + wfig2
+
+#--overall plot title
+w.nlo <- 
+  y.wald %>% 
+  filter(grepl("Reduced", trt)) %>% 
+  pull(nrate_lbac) %>% 
+  unique() %>% round()
+
+w.nhi <- 
+  y.wald %>% 
+  filter(!grepl("Reduced", trt)) %>% 
+  pull(nrate_lbac) %>% 
+  unique() %>% round()
+
+w.loc <- t %>% filter(trial_label == "Waldo") %>% pull(city) %>% unique() %>% str_to_title()
+
+w.plot.title = paste0("Impact of reducing N from ", 
+                        w.nhi, 
+                        " lb/ac to ",
+                        w.nlo, 
+                        " lb/ac in ",
+                        w.loc, " IA, 2022")
+
+wfig_wea / wfig_res &
+  plot_annotation(theme = theme_border,
+                  title = w.plot.title) &
+  theme(plot.title = element_text(size = rel(1.3)),
+        text = element_text(family = "Times New Roman"))
+
+ggsave("figs/ind-figs/P1_Waldo2.png", 
+       height = 6.5, width = 8)
 
 # loop it -----------------------------------------------------------------
 

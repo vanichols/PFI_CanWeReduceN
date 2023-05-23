@@ -1,5 +1,6 @@
 #--process stefan's data
 #--they all have different column names
+#--5/23 fix waldo reps to be sequential
 
 library(tidyverse)
 library(janitor)
@@ -213,12 +214,18 @@ d16 <-
 # 17. waldo---------------------------------------------------------------------
 #--added n rates
 #--there was no rep 6, but there was 7 and 8
+#--rename them 6 and 7
 
 d17 <- 
   CleanData(i = 17) |> 
   rename(trt = 3,
          nrate_lbac = 4,
-         yield_buac = 5) |> 
+         yield_buac = 5) |>
+  mutate(rep = case_when(
+    rep == 7 ~ 6,
+    rep == 8 ~ 7,
+    TRUE ~ rep
+  )) %>% 
   select(trial_key, rep, trt, nrate_lbac, yield_buac)
 
 
@@ -236,6 +243,7 @@ for (i in 1:nrow(coops)){
   
 }
 
+#--this should be empty (no duplicates)
 d_all %>%
   dplyr::group_by(trial_key, rep, trt) %>%
   dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
