@@ -25,7 +25,9 @@ y <-
   y_raw %>% 
   group_by(trial_key) %>% 
   mutate(grand_mean = mean(estimate),
-         yield_buac = ifelse(pval < 0.05, estimate, grand_mean)) %>% 
+         yield_buac = ifelse(pval < 0.05, estimate, grand_mean)
+         #yield_buac = estimate
+         ) %>% 
   select(trial_key, trt, yield_buac) %>% 
   left_join(nrates)
 
