@@ -10,8 +10,8 @@ library(patchwork)
 
 rm(list = ls())
 
-source("code/04_figs/00_weather-figs-fxns.R")
-source("code/04_figs/00_fig-colors.R")
+source("code/05_figs/00_weather-figs-fxns.R")
+source("code/05_figs/00_fig-colors.R")
 
 
 # theme -------------------------------------------------------------------
@@ -39,73 +39,93 @@ theme_border <-
     plot.background = element_rect(fill = NA, colour = 'black', linewidth = 3),
     text = element_text(family = "Times New Roman"))
 
-# data --------------------------------------------------------------------
-
+# general data --------------------------------------------------------------------
+ 
 tk <- 
   read_csv("data_tidy/td_trialkey.csv") %>% 
   select(trial_key, trial_label) %>% 
   add_row(trial_key = "waldnorep1_22", trial_label = "Waldo")
 
+d_diffs <- 
+  read_csv("data_tidy/td_trtdiffs.csv") %>% 
+  left_join(tk)
+
+# yields ------------------------------------------------------------------
+
 y <- read_csv("data_tidy/td_cornyields.csv") %>% 
+  left_join(tk) %>% 
+  mutate(yield_buac = round(yield_buac, 0))
+
+#--yield stats for LSD
+y_st <- 
+  read_csv("data_stats/stat_cornyield.csv") %>% 
   left_join(tk)
 
-y_st <- read_csv("data_stats/stat_cornyield.csv") %>% 
-  left_join(tk)
+#--need estimated reduction
+#--make it say 'No statistical difference in yields'
+#--get rid of 'rounding' and add Least Signifant Difference (LSD)
+y2 <-
+  y |>  
+  left_join(y_st) |> 
+  #--get rid of bakehouse's NA rep
+  filter(!is.na(yield_buac)) %>%  
+  mutate(trt = ifelse(trt == "typ", 
+                      paste0("Typical"), #,\n", round(nrate_lbac, 0), " lb N/ac"),
+                      paste0("Reduced")),#\n", round(nrate_lbac, 0), " lb N/ac")),
+         trt = as.factor(trt),
+         trt = fct_rev(trt),
+         dir = ifelse(diff_est < 0, "increase", "reduction")) %>% 
+  mutate(lsd_lab = paste("Least significant difference (LSD)\nat 95% confidence level of", round(lsd, 0), "bu/ac"),
+         yld_lab = paste(round(estimate, 0), "bu/ac")) %>% 
+  group_by(trial_label) %>% 
+  mutate(yield_max = max(yield_buac, na.rm = T)) 
 
-#--money
-
-m_st <- 
-  read_csv("data_stats/stat_money.csv") %>% 
-  left_join(tk)
-
-m_raw0 <- 
-  read_csv("data_tidy/td_money.csv") 
-
-#--add fake waldorep1
-m_add <- 
-  m_raw0 %>% 
-  filter(grepl("wald", trial_key),
-         rep != 1) %>% 
-  mutate(trial_key = "waldnorep1_22")
-
-m_raw <- 
-  m_raw0 %>%
-  bind_rows(m_add) %>% 
-  left_join(tk)
-
-#--combine data and stats
-m_dst <- 
-  m_raw %>%
-  select(trial_key, trial_label, everything()) %>% 
-  pivot_longer(4:ncol(.))  %>% 
-  left_join(m_st %>% select(-estimate) %>% rename(name = var)) %>% 
-  group_by(trial_key) %>% 
-  mutate(pval_max = max(pval),
-         value_min = min(value, na.rm = T),
-         value_max = max(value, na.rm = T)) %>%
-  ungroup() %>% 
-  mutate(fin_sig = ifelse(pval_max < 0.05, "*", "NS"),
-         clr = case_when(
-           (value_max < 0 & value_min < 0) ~ "bad",
-           (value_max > 0 & value_min < 0) ~ "neutral",
-           (value_max > 0 & value_min > 0) ~ "good"
-         ),
-         clr = ifelse(trial_key == "waldnorep1_22", 
-                      "good", #--this one is weird)
-                      clr)
-  )
-
-#--no idea
-m <-
-  m_dst %>%
-  select(trial_key, trial_label, value_min, value_max, fin_sig, clr) %>% 
-  left_join(
-    m_st %>% 
-      filter(var == "midsav_dolac") %>% 
-      select(trial_key, trial_label, estimate) %>% 
-      rename(midsav_dolac = estimate)
-  ) %>% 
+#--fix the rounding issue
+#--new diff_est
+y_diff <- 
+  y2 %>% 
+  select(trial_key, trt, estimate, diff_est) %>% 
   distinct() %>% 
+  pivot_wider(names_from = trt, values_from = estimate) %>% 
+  mutate(
+    diff_calc = round(Typical, 0) - round(Reduced, 0)) %>% 
+  select(trial_key, diff_calc)
+
+y3 <- 
+  y2 %>% 
+  select(-diff_est) %>% 
+  left_join(y_diff) %>% 
+  rename(diff_est = diff_calc) %>% 
+  #--put amount of N in trt label
+  mutate(trt = paste0(trt, ",\n", nrate_lbac, "lb N/ac"),
+         sig_lab = 
+           case_when(
+             (pval < 0.05) ~ paste("Significant", dir, "of", abs(round(diff_est, 0)), "bu/ac"),
+             (pval > 0.05) ~ "No statistical difference in yields"))
+
+# money -------------------------------------------------------------------
+
+d_money_raw <- 
+  read_csv("data_tidy/td_money.csv") %>% 
+  left_join(tk) %>% 
+  select(trial_key, trial_label, everything())
+
+d_money <-
+  d_money_raw %>%
+  rename(value_max = bestsav_dolac,
+         value_mid = midsav_dolac,
+         value_min = worstsav_dolac) %>%
+  mutate(clr = case_when(
+    (value_max < 0 & value_min < 0) ~ "bad",
+    (value_max > 0 & value_min < 0) ~ "neutral",
+    (value_max > 0 & value_min > 0) ~ "good"
+  ))
+
+#--farmer plus reduction label
+m <-
+  d_money %>% 
+  left_join(d_diffs %>% select(trial_label, dif_nrate_lbac) %>% distinct()) %>% 
+  #mutate(trial_label = paste0(trial_label, ", -", round(dif_nrate_lbac), " lb/ac")) %>% 
   mutate(
     value_max_lab = ifelse(value_max < 0, 
                               paste0("-$", abs(round(value_max, 0)), "/ac"), 
@@ -113,10 +133,14 @@ m <-
     value_min_lab = ifelse(value_min < 0, 
                                paste0("-$", abs(round(value_min, 0)), "/ac"), 
                                paste0("+$", abs(round(value_min, 0)), "/ac")),
-    midsav_dolac_lab = ifelse(midsav_dolac < 0, 
-                             paste0("-$", abs(round(midsav_dolac, 0)), "/ac"), 
-                             paste0("+$", abs(round(midsav_dolac, 0)), "/ac"))
+    value_mid_lab = ifelse(value_mid < 0, 
+                             paste0("-$", abs(round(value_mid, 0)), "/ac"), 
+                             paste0("+$", abs(round(value_mid, 0)), "/ac"))
   ) 
+
+
+
+# names to loop through ---------------------------------------------------
 
 
 my_names_raw <- 
@@ -125,11 +149,11 @@ my_names_raw <-
   unique()
 
 #--veenstra will be special, leave just as a placeholder
-#--waldo is done separately, remove
-my_names <- my_names_raw[-16][-16]
+my_names <- my_names_raw[-16]
 
 
-#---weather data
+
+# weather -----------------------------------------------------------------
 
 tkcity <- 
   read_csv("data_tidy/td_trialkey.csv") %>% 
@@ -148,38 +172,21 @@ cp <-
   filter(grepl("precip", wea_type))
 
 
-#--need estimated reduction
-#--make it say 'No statistical difference in yields'
-#--get rid of 'rounding' and add Least Signifant Difference (LSD)
-y2 <-
-  y |>  
-  left_join(y_st) |> 
-  #--get rid of bakehouse's NA rep
-  filter(!is.na(yield_buac)) %>%  
-  mutate(trt = ifelse(trt == "typ", 
-                      paste0("Typical"), #,\n", round(nrate_lbac, 0), " lb N/ac"),
-                      paste0("Reduced")),#\n", round(nrate_lbac, 0), " lb N/ac")),
-         trt = as.factor(trt),
-         trt = fct_rev(trt),
-         sig = ifelse(pval < 0.05, 
-                      "Significant", "StatisticalXXX"),
-         dir = ifelse(diff_est < 0, "increase", "reduction"),
-         sig_lab = paste(sig, dir, "of", abs(round(diff_est, 0)), "bu/ac*"),
-         yld_lab = paste(round(estimate, 0), "bu/ac")) |> 
-  group_by(trial_label) |> 
-  mutate(yield_max = max(yield_buac, na.rm = T)) 
-
 
 
 # functions ---------------------------------------------------------------
 
 #--test
-y.tst <- y2 %>% filter(trial_key == "amun_22")
+y.tst <- y3 %>% filter(trial_key == "wald_22")
 
 YieldFig <- function(y.data = y.tst) {
   
+  caption.lsd <- y.data %>% pull(lsd_lab) %>% unique()
+  
   fig <- 
-    y.data |>
+    y.data %>% 
+    arrange(trt) %>% 
+    mutate(trt = fct_rev(trt)) %>% 
     mutate(rep_lab = paste0("Rep ", rep)) %>% 
     ggplot(aes(trt, yield_buac)) +
     geom_col(aes(group = rep, fill = trt),
@@ -215,7 +222,7 @@ YieldFig <- function(y.data = y.tst) {
     labs(x = NULL,
          y = "Bushels per ac",
          title = "Corn yield response",
-        caption = "Assessed at 95% confidence level\nNumbers may not match exactly due to rounding")
+        caption = caption.lsd)
   
   return(fig)
   
@@ -287,7 +294,7 @@ MoneyFig <- function(m.data = m.tst) {
   #--midpoint
     geom_point(
       aes(x = trial_label,
-          y = midsav_dolac,
+          y = value_mid,
           color = clr),
       pch = 17,
       show.legend = F,
@@ -313,8 +320,8 @@ MoneyFig <- function(m.data = m.tst) {
     geom_segment(aes(
       xend = 1.05,
       x = 1.35,
-      yend = midsav_dolac,
-      y = midsav_dolac + 2
+      yend = value_mid,
+      y = value_mid + 2
     ),
     color= "gray50",
     arrow = arrow(length = unit(0.2, "cm"))) +
@@ -354,8 +361,8 @@ MoneyFig <- function(m.data = m.tst) {
     geom_text(
       aes(
         x = 1.4,
-        y = midsav_dolac + 2,
-        label = paste0("Midpoint, ", midsav_dolac_lab)
+        y = value_mid + 2,
+        label = paste0("Midpoint, ", value_mid_lab)
       ),
       check_overlap = T,
       hjust = 0,
@@ -376,7 +383,7 @@ MoneyFig <- function(m.data = m.tst) {
       x = NULL,
       y = "Dollars per acre",
       title = str_wrap(
-        "Financial outcome**",
+        "Financial outcome",
         width = 40
       ),
       caption = "N prices ranged from $0.60-$1.20/lb N\n Corn revenue ranged from $5.70-$7.48/bu"
@@ -426,72 +433,6 @@ MoneyFig <- function(m.data = m.tst) {
 #         text = element_text(family = "Times New Roman"))
 
 
-# waldo special ------------------------------------------------
-
-#--money
-m.wald <- 
-  m %>% 
-  filter(trial_label == "Waldo") %>% 
-  mutate(trial_label = ifelse(trial_key == "wald_22", "Waldo", "Waldo, no Rep 1"))
-
-wfig_m <- 
-  MoneyFig(m.data = m.wald) + 
-  facet_grid(~trial_label, scales = "free")
-
-#--yield
-y.wald <- y2 %>% filter(trial_key == "wald_22")
-wfig_y <- YieldFig(y.wald)
-
-wfig_res <-
-  wfig_y + wfig_m +
-  plot_layout(widths = c(0.3, 0.7)) &
-  plot_annotation(theme = theme_border,
-                  title = "Test") &
-  theme(plot.title = element_text(size = rel(1.3)))
-
-#--weather
-wfig1 <-
-  TempFigInd(f.data = t, f.trial_label = "Waldo") +
-  labs(title = "Temperature")
-
-wfig2 <-
-  CumPrecipFigInd(f.data = cp, f.trial_label = "Waldo") +
-  labs(title = "Precipitation")
-
-wfig_wea <-
-  wfig1 + wfig2
-
-#--overall plot title
-w.nlo <- 
-  y.wald %>% 
-  filter(grepl("Reduced", trt)) %>% 
-  pull(nrate_lbac) %>% 
-  unique() %>% round()
-
-w.nhi <- 
-  y.wald %>% 
-  filter(!grepl("Reduced", trt)) %>% 
-  pull(nrate_lbac) %>% 
-  unique() %>% round()
-
-w.loc <- t %>% filter(trial_label == "Waldo") %>% pull(city) %>% unique() %>% str_to_title()
-
-w.plot.title = paste0("Impact of reducing N from ", 
-                        w.nhi, 
-                        " lb/ac to ",
-                        w.nlo, 
-                        " lb/ac in ",
-                        w.loc, " IA, 2022")
-
-wfig_wea / wfig_res &
-  plot_annotation(theme = theme_border,
-                  title = w.plot.title) &
-  theme(plot.title = element_text(size = rel(1.3)),
-        text = element_text(family = "Times New Roman"))
-
-ggsave("figs/ind-figs/P1_Waldo2.png", 
-       height = 6.5, width = 8)
-
 # loop it -----------------------------------------------------------------
 
 my_letters <- letters %>% str_to_upper()
@@ -505,7 +446,7 @@ for (i in c(seq(1, 14, 1), 16)){
   
   #--yield/money
   tmp.ydat <- 
-    y2 |> 
+    y3 |> 
     filter(trial_label == my_names[i]) 
   
   fig1 <- YieldFig(y.data = tmp.ydat)
@@ -520,8 +461,6 @@ for (i in c(seq(1, 14, 1), 16)){
   fig_res <- 
     fig1 + fig3 + plot_layout(widths = c(0.5, 0.5)) & 
     plot_annotation(theme = theme_border) 
-  
-  
   
   #--weather
   tmp.name <- my_names[i]

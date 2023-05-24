@@ -6,7 +6,7 @@ library(ggarchery)
 
 rm(list = ls())
 
-source("code/04_figs/00_fig-colors.R")
+source("code/05_figs/00_fig-colors.R")
 
 # theme -------------------------------------------------------------------
 
@@ -70,49 +70,27 @@ y_dst <-
 
 #--money data------------------
 
-#--estimate and pval for each trial/scenario
-st_money <- 
-  read_csv("data_stats/stat_money.csv") %>% 
-  left_join(tk)
-
 d_money_raw <- 
   read_csv("data_tidy/td_money.csv") %>% 
   left_join(tk) %>% 
   select(trial_key, trial_label, everything())
 
 #--money data and stats
-m_dst <- 
+d_money_fig <- 
   d_money_raw %>%
-  pivot_longer(4:ncol(.))  %>% 
-  left_join(st_money %>% select(-estimate) %>% rename(name = var)) %>% 
-  group_by(trial_label) %>% 
-  mutate(pval_max = max(pval),
-         value_min = min(value, na.rm = T),
-         value_max = max(value, na.rm = T)) %>%
-  ungroup() %>% 
-  mutate(fin_sig = ifelse(pval_max < 0.05, "*", "NS"),
-         clr = case_when(
-           (value_max < 0 & value_min < 0) ~ "bad",
-           (value_max > 0 & value_min < 0) ~ "neutral",
-           (value_max > 0 & value_min > 0) ~ "good"
-         ))
-
-d_money_fig <-
-  m_dst %>%
-  select(trial_label, value_min, value_max, fin_sig, clr) %>% 
-  left_join(
-    st_money %>% 
-      filter(var == "midsav_dolac") %>% 
-      select(trial_label, estimate) %>% 
-      rename(midsav_dolac = estimate)
-  ) %>% 
-  distinct() %>% 
-  select(trial_label, clr, midsav_dolac) %>% 
+  rename(value_max = bestsav_dolac,
+         value_mid = midsav_dolac,
+         value_min = worstsav_dolac) %>%
+  mutate(clr = case_when(
+    (value_max < 0 & value_min < 0) ~ "bad",
+    (value_max > 0 & value_min < 0) ~ "neutral",
+    (value_max > 0 & value_min > 0) ~ "good"
+  )) %>% 
+  select(trial_label, clr, value_mid) %>% 
   #--create nice label
-  mutate(midsav_dolac_lab = ifelse(midsav_dolac < 0, 
-                                  paste0("-$", abs(round(midsav_dolac)), "/ac"),
-                                  paste0("$", round(midsav_dolac), "/ac")))#,
-         #midsav_dolac_lab = ifelse(clr == "neutral", " ", paste0(midsav_dolac_lab, "/ac")))
+  mutate(value_mid_lab = ifelse(value_mid < 0, 
+                                  paste0("-$", abs(round(value_mid)), "/ac"),
+                                  paste0("$", round(value_mid), "/ac")))
 
 
 #--combine money and yield info
@@ -138,7 +116,8 @@ d_fig |>
          trial_label = paste0(trial_label, ", -", round(dif_nrate_lbac), " lb/ac")) %>% 
   #--fig
   ggplot(aes(reorder(trial_label, -yld_dif_buac), yld_dif_buac)) +
-  geom_col(aes(fill = clr),
+  geom_col(aes(fill = yld_sig),
+               #size = yld_sig),
            color = "black",
            show.legend = F) +
   geom_text(aes(reorder(trial_label, -yld_dif_buac), 
@@ -150,19 +129,18 @@ d_fig |>
   geom_text(aes(reorder(trial_label, -yld_dif_buac), 
                 y = 28, 
                 hjust = 1,
-                label = midsav_dolac_lab,
+                label = value_mid_lab,
                 color = clr),
             angle = 0,
             show.legend = F,
             fontface = "bold") +
   coord_flip() +
   my_yield_theme +
+  scale_size_manual(values = c(0, 2)) +
   scale_y_continuous(limits = c(-60, 40),
                      breaks = c(-60, -40, -20, 0,
                                 20, 40)) +
-  scale_fill_manual(values = c("neutral" = pfi_tan, 
-                               "good" = pfi_blue,
-                               "bad" = pfi_orange)) +
+  scale_fill_manual(values = c(pfi_tan, pfi_green)) +
   scale_color_manual(values = c("neutral" = pfi_tan, 
                                 "good" = pfi_blue,
                                 "bad" = pfi_orange)) +

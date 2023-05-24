@@ -67,17 +67,15 @@ d_money <-
 # ordered by max value -------------------------------------------------------------
 
 #--create nice labels for fig
+#--don't normalize
 d_money_fig <-
   d_money %>% 
   left_join(d_diffs %>% select(trial_label, dif_nrate_lbac) %>% distinct()) %>% 
-  mutate(value_min = value_min / dif_nrate_lbac,
-         value_max = value_max/dif_nrate_lbac,
-         value_mid = value_mid/dif_nrate_lbac,
+  mutate(#value_min = value_min / dif_nrate_lbac,
+         #value_max = value_max/dif_nrate_lbac,
+         #value_mid = value_mid/dif_nrate_lbac,
          trial_label = paste0(trial_label, ", -", round(dif_nrate_lbac), " lb/ac"))
 
-
-d_money_fig %>% 
-  filter(grepl("Bardole", trial_label))
 
 d_money_fig %>% 
   ggplot() + 
@@ -107,7 +105,7 @@ d_money_fig %>%
   geom_segment(aes(
     x = reorder(trial_label, value_max),
     xend = reorder(trial_label, value_max),
-    y = value_max-0.2,
+    y = value_max - 5,
     yend = value_max, 
     color = clr),
     linewidth = 4,
@@ -117,7 +115,7 @@ d_money_fig %>%
   geom_segment(aes(
     x = reorder(trial_label, value_max),
     xend = reorder(trial_label, value_max),
-    y = value_min+0.2,
+    y = value_min + 5,
     yend = value_min, 
     color = clr),
     linewidth = 4,
@@ -132,106 +130,23 @@ d_money_fig %>%
     show.legend = F,
     pch = 17,
     size = 2) +
-  geom_text(aes(x = 12, y = 4), label = "Financial savings", check_overlap = T,
+  geom_text(aes(x = 12, y = 110), label = "Financial savings", check_overlap = T,
             #hjust = 0,
             fontface = "italic", color = pfi_blue) +
-  geom_text(aes(x = 7, y = -10), label = "Financial loss", check_overlap = T,
+  geom_text(aes(x = 7, y = -200), label = "Financial loss", check_overlap = T,
             #hjust = 0,
             fontface = "italic", color = pfi_orange) +
   scale_y_continuous(labels = label_dollar(),
-                     limits = c(-15, 5),
+#                     limits = c(-15, 5),
                      #breaks = c(-400, -300, -200, -100, 0, 100, 200, 300)
   ) +
   scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
   labs(x = NULL,
-       y = "$/ac per\nlb N reduced",
+       y = "Dollars\nper acre",
        title = str_wrap("Seven (41%) trials saw potential for savings when reducing N rates",
                         width = 80),
        subtitle = "Ten trials saw financial losses in all price scenarios, trt OR grand mean yields") + 
   my_money_theme
 
-ggsave("figs/fig_money-trt-or-grand-means.png")
+ggsave("figs/fig_money.png", width = 7, height = 5)
 
-
-
-# ordered by mid -------------------------------------------------------------
-
-d_money_fig %>% 
-  ggplot() + 
-  geom_hline(yintercept = 0) +
-  #--creating white background for alpha
-  geom_segment(aes(
-    x = reorder(trial_label, midsav_dolac),
-    xend = reorder(trial_label, midsav_dolac),
-    y = value_min,
-    yend = value_max), 
-    color = "white",
-    linewidth = 4,
-    show.legend = F
-  )  +   
-  #--alpha
-  geom_segment(aes(
-    x = reorder(trial_label, midsav_dolac),
-    xend = reorder(trial_label, midsav_dolac),
-    y = value_min,
-    yend = value_max, 
-    color = clr),
-    alpha = 0.6,
-    linewidth = 4,
-    show.legend = F
-  )  + 
-  #--best case
-  geom_segment(aes(
-    x = reorder(trial_label, midsav_dolac),
-    xend = reorder(trial_label, midsav_dolac),
-    y = value_max-0.2,
-    yend = value_max, 
-    color = clr),
-    linewidth = 4,
-    show.legend = F
-  )  + 
-  #--wrost case
-  geom_segment(aes(
-    x = reorder(trial_label, midsav_dolac),
-    xend = reorder(trial_label, midsav_dolac),
-    y = value_min+0.2,
-    yend = value_min, 
-    color = clr),
-    linewidth = 4,
-    show.legend = F
-  )  + 
-  #--midpoint
-  geom_point(aes(
-    x = reorder(trial_label, midsav_dolac),
-    y = midsav_dolac, 
-    color = clr),
-    #color = "white",
-    show.legend = F,
-    pch = 17,
-    size = 2) +
-  # geom_text(aes(
-  #   x = reorder(trial_label, midsav_dolac),
-  #   y = -11,
-  #   label = paste0(round(dif_nrate_lbac), " lb/ac")),
-  #   color = "gray",
-  #   fontface = "italic") +
-  geom_text(aes(x = 12, y = 4), label = "Financial savings", check_overlap = T,
-            #hjust = 0,
-            fontface = "italic", color = pfi_blue) +
-  geom_text(aes(x = 7, y = -10), label = "Financial loss", check_overlap = T,
-            #hjust = 0,
-            fontface = "italic", color = pfi_orange) +
-  scale_y_continuous(labels = label_dollar(),
-                     #limits = c(-15, 5),
-                     #breaks = c(-400, -300, -200, -100, 0, 100, 200, 300)
-  ) +
-  scale_color_manual(values = c("good" = pfi_blue, "neutral" = pfi_tan, "bad" = pfi_orange)) +
-  labs(x = NULL,
-       y = "$/ac per\nlb N reduced",
-       title = str_wrap("Over half the trials saw potential for savings when reducing N rates",
-                        width = 80),
-       subtitle = "Eight trials saw financial losses in all price scenarios, the remaining nine saw potential savings") + 
-  my_money_theme
-
-
-ggsave("figs/fig04_money.png", width = 7, height = 5)
