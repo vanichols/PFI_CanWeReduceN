@@ -145,8 +145,9 @@ d_money_fig %>%
        y = "Dollars\nper acre",
        title = str_wrap("Seven (41%) trials saw potential for savings when reducing N rates",
                         width = 80),
-       subtitle = "Ten trials saw financial losses in all price scenarios, trt OR grand mean yields") + 
+       subtitle = "Ten trials saw financial losses in all price scenarios") + 
   my_money_theme
 
-ggsave("figs/fig_money.png", width = 7, height = 5)
+ggsave("figs/fig04_money.png", width = 7, height = 5)
+
 
