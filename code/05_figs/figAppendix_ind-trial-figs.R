@@ -437,7 +437,7 @@ MoneyFig <- function(m.data = m.tst) {
 
 my_letters <- letters %>% str_to_upper()
 
-i <- 12
+i <- 1
 
 for (i in c(seq(1, 14, 1), 16)){
 
@@ -500,7 +500,7 @@ for (i in c(seq(1, 14, 1), 16)){
     theme(plot.title = element_text(size = rel(1.4)),
           text = element_text(family = "Times New Roman"))
   
-  ggsave(paste0("figs/ind-figs/", tmp.figname, "_", my_names[i], ".png"), 
+  ggsave(paste0("figs/ind-figs/", tmp.figname, "_", my_names[i], ".jpg"), 
          height = 6.5, width = 8)
   
   
@@ -581,5 +581,5 @@ vfig_wea / vfig_res +
   theme(plot.title = element_text(size = rel(1.4)),
         text = element_text(family = "Times New Roman"))
 
-ggsave(paste0("figs/ind-figs/O1_Veenstra.png"), 
+ggsave(paste0("figs/ind-figs/O1_Veenstra.jpg"), 
        height = 9, width = 8)

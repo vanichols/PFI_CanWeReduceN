@@ -8,8 +8,8 @@ library(lubridate)
 library(patchwork)
 
 rm(list = ls())
-source("code/04_figs/00_weather-figs-fxns.R")
-source("code/04_figs/00_fig-colors.R")
+source("code/05_figs/00_weather-figs-fxns.R")
+source("code/05_figs/00_fig-colors.R")
 
 
 # border for patchwork plot -----------------------------------------------
@@ -69,6 +69,6 @@ fig_t + fig_cp +
     title = str_wrap("Weather deviations from historical averages", width = 80), 
     subtitle = str_wrap("Cool Aprils, dry growing seasons at all 17 trials", width = 80))
 
-ggsave("figs/fig03_wea.png", width = 7, height = 5)
+ggsave("figs/fig03_wea.jpg", width = 7, height = 5)
 
 

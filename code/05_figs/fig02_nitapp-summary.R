@@ -8,7 +8,7 @@ library(ggarchery)
 
 rm(list = ls())
 
-source("code/04_figs/00_fig-colors.R")
+source("code/05_figs/00_fig-colors.R")
 
 # theme -------------------------------------------------------------------
 
@@ -117,6 +117,6 @@ fig_dat %>%
        subtitle = "On average, rates were reduced by 30% (20-74 lb N/ac lower than typical rate)") + 
   my_nitapp_theme 
 
-ggsave("figs/fig02_nrates.png", width = 8, height = 5.5)
+ggsave("figs/fig02_nrates.jpg", width = 8, height = 5.5)
 
 

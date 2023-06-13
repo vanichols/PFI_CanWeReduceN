@@ -148,6 +148,6 @@ d_money_fig %>%
        subtitle = "Ten trials saw financial losses in all price scenarios") + 
   my_money_theme
 
-ggsave("figs/fig04_money.png", width = 7, height = 5)
+ggsave("figs/fig04_money.jpg", width = 7, height = 5)
 
 

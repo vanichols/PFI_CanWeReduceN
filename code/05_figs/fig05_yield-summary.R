@@ -150,5 +150,5 @@ d_fig |>
        subtitle = "Financial outcome from reduced N rate assuming midpoint price scenario as reference on right",
        caption = "* = Significant change in yield at 95% confidence level")
 
-ggsave("figs/fig05_yields.png", width = 7, height = 5)
+ggsave("figs/fig05_yields.jpg", width = 7, height = 5)
 
